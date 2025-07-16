@@ -18,6 +18,7 @@ import {
   Eye,
   Trash2,
   Plus,
+  Menu,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -48,6 +49,7 @@ import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 // Dati simulati per i documenti
 const documentsData = [
@@ -121,6 +123,7 @@ const categories = [
 export function DocumentsManagement() {
   const [user, setUser] = useState<any>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Tutti")
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false)
@@ -204,6 +207,74 @@ export function DocumentsManagement() {
     return <div>Caricamento...</div>
   }
 
+  // Navigation content component that can be reused in both desktop and mobile
+  const NavigationContent = ({ isMobile = false }: { isMobile?: boolean }) => (
+    <>
+      <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+        <Link
+          href="/dashboard"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${!isMobile && sidebarCollapsed ? "justify-center" : ""}`}
+          title={!isMobile && sidebarCollapsed ? "Dashboard" : ""}
+          onClick={() => isMobile && setMobileMenuOpen(false)}
+        >
+          <Home className="h-4 w-4" />
+          {(isMobile || !sidebarCollapsed) && "Dashboard"}
+        </Link>
+        <Link
+          href="/"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${!isMobile && sidebarCollapsed ? "justify-center" : ""}`}
+          title={!isMobile && sidebarCollapsed ? "Membri" : ""}
+          onClick={() => isMobile && setMobileMenuOpen(false)}
+        >
+          <Users className="h-4 w-4" />
+          {(isMobile || !sidebarCollapsed) && "Membri"}
+        </Link>
+        <Link
+          href="/documents"
+          className={`flex items-center gap-3 rounded-lg bg-accent px-3 py-2 text-accent-foreground transition-all hover:text-primary ${!isMobile && sidebarCollapsed ? "justify-center" : ""}`}
+          title={!isMobile && sidebarCollapsed ? "Documenti" : ""}
+          onClick={() => isMobile && setMobileMenuOpen(false)}
+        >
+          <FileText className="h-4 w-4" />
+          {(isMobile || !sidebarCollapsed) && "Documenti"}
+        </Link>
+        <Link
+          href="/simulation"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${!isMobile && sidebarCollapsed ? "justify-center" : ""}`}
+          title={!isMobile && sidebarCollapsed ? "Simulazione" : ""}
+          onClick={() => isMobile && setMobileMenuOpen(false)}
+        >
+          <Calculator className="h-4 w-4" />
+          {(isMobile || !sidebarCollapsed) && "Simulazione"}
+        </Link>
+        <Link
+          href="/gse-reports"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${!isMobile && sidebarCollapsed ? "justify-center" : ""}`}
+          title={!isMobile && sidebarCollapsed ? "Report GSE" : ""}
+          onClick={() => isMobile && setMobileMenuOpen(false)}
+        >
+          <LineChart className="h-4 w-4" />
+          {(isMobile || !sidebarCollapsed) && "Report GSE"}
+        </Link>
+      </nav>
+      {(isMobile || !sidebarCollapsed) && (
+        <div className="mt-auto p-4">
+          <Card>
+            <CardHeader className="p-2 pt-0 md:p-4">
+              <CardTitle>Supporto</CardTitle>
+              <CardDescription>Hai bisogno di aiuto? Contatta il nostro team di supporto.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
+              <Button size="sm" className="w-full">
+                Contattaci
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </>
+  )
+
   return (
     <div
       className={`grid min-h-screen w-full transition-all duration-300 ${sidebarCollapsed ? "md:grid-cols-[64px_1fr]" : "md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]"}`}
@@ -230,68 +301,41 @@ export function DocumentsManagement() {
             </Button>
           </div>
           <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="/dashboard"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Dashboard" : ""}
-              >
-                <Home className="h-4 w-4" />
-                {!sidebarCollapsed && "Dashboard"}
-              </Link>
-              <Link
-                href="/"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Membri" : ""}
-              >
-                <Users className="h-4 w-4" />
-                {!sidebarCollapsed && "Membri"}
-              </Link>
-              <Link
-                href="/documents"
-                className={`flex items-center gap-3 rounded-lg bg-accent px-3 py-2 text-accent-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Documenti" : ""}
-              >
-                <FileText className="h-4 w-4" />
-                {!sidebarCollapsed && "Documenti"}
-              </Link>
-              <Link
-                href="/simulation"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Simulazione" : ""}
-              >
-                <Calculator className="h-4 w-4" />
-                {!sidebarCollapsed && "Simulazione"}
-              </Link>
-              <Link
-                href="#"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Report GSE" : ""}
-              >
-                <LineChart className="h-4 w-4" />
-                {!sidebarCollapsed && "Report GSE"}
-              </Link>
-            </nav>
+            <NavigationContent isMobile={false} />
           </div>
-          {!sidebarCollapsed && (
-            <div className="mt-auto p-4">
-              <Card>
-                <CardHeader className="p-2 pt-0 md:p-4">
-                  <CardTitle>Supporto</CardTitle>
-                  <CardDescription>Hai bisogno di aiuto? Contatta il nostro team di supporto.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                  <Button size="sm" className="w-full">
-                    Contattaci
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
         </div>
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
+          {/* Mobile menu */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="shrink-0 md:hidden"
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex flex-col p-0">
+              <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 font-semibold"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Package2 className="h-6 w-6 text-green-600" />
+                  <span>CER Manager</span>
+                </Link>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <NavigationContent isMobile={true} />
+              </div>
+            </SheetContent>
+          </Sheet>
+          
           <div className="w-full flex-1">
             <h1 className="text-lg font-semibold md:text-2xl">Gestione Documenti</h1>
           </div>
