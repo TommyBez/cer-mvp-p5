@@ -1,10 +1,8 @@
-"use client"
-
-import { useEffect } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import { AppHeader } from "@/components/app-header"
 import { SidebarInset } from "@/components/ui/sidebar"
+import { getCurrentUser } from "@/lib/data-service"
 
 const getPageTitle = (pathname: string): string => {
   const routes: Record<string, string> = {
@@ -17,29 +15,23 @@ const getPageTitle = (pathname: string): string => {
   return routes[pathname] || ""
 }
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    // Check if user is authenticated
-    if (typeof window !== "undefined") {
-      const user = localStorage.getItem("user")
-      if (!user) {
-        router.push("/login")
-      }
-    }
-  }, [router])
+  // Check authentication server-side
+  const user = await getCurrentUser()
+  
+  if (!user || user.role !== 'admin') {
+    redirect('/login')
+  }
 
   return (
     <>
       <AppSidebar />
       <SidebarInset>
-        <AppHeader title={getPageTitle(pathname)} />
+        <AppHeader />
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           {children}
         </main>

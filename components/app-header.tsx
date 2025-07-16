@@ -1,11 +1,18 @@
 "use client"
 
-import { Bell } from "lucide-react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-
+import { usePathname } from "next/navigation"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
+import { Bell, Settings } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,65 +21,71 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-export function AppHeader({ title }: { title?: string }) {
-  const [user, setUser] = useState<any>(null)
-  const router = useRouter()
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userData = localStorage.getItem("user")
-      if (userData) {
-        setUser(JSON.parse(userData))
-      }
-    }
-  }, [])
-
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("user")
-    }
-    router.push("/login")
+const getPageTitle = (pathname: string): string => {
+  const routes: Record<string, string> = {
+    "/dashboard": "Dashboard",
+    "/members": "Gestione Membri",
+    "/documents": "Gestione Documenti", 
+    "/simulation": "Simulazione Economica",
+    "/gse-reports": "Report GSE",
   }
+  return routes[pathname] || ""
+}
 
+export function AppHeader() {
+  const pathname = usePathname()
+  const title = getPageTitle(pathname)
+  
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
-      
-      <div className="w-full flex-1">
-        {title && <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>}
-      </div>
-      
-      <Button variant="outline" size="icon" className="ml-auto h-8 w-8 bg-transparent">
-        <Bell className="h-4 w-4" />
-        <span className="sr-only">Toggle notifications</span>
-      </Button>
-      
-      {user && (
+      <Separator orientation="vertical" className="mr-2 h-4" />
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{title}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="ml-auto flex items-center gap-2">
+        <Button variant="ghost" size="icon">
+          <Bell className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon">
+          <Settings className="h-4 w-4" />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-              <Image
-                src="/placeholder-user.jpg"
-                width={36}
-                height={36}
-                alt="Avatar"
-                className="overflow-hidden rounded-full"
-              />
-              <span className="sr-only">Toggle user menu</span>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="/avatars/01.png" alt="Admin" />
+                <AvatarFallback>AD</AvatarFallback>
+              </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Benvenuto, {user.name}</DropdownMenuLabel>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">Admin User</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  admin@example.com
+                </p>
+              </div>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem>Profilo</DropdownMenuItem>
             <DropdownMenuItem>Impostazioni</DropdownMenuItem>
-            <DropdownMenuItem>Supporto</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuItem>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )}
+      </div>
     </header>
   )
 }
