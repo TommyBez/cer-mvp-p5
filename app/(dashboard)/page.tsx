@@ -1,14 +1,19 @@
-"use client"
+import { fetchDashboardData } from "@/lib/data"
+import { DashboardClient } from "@/components/client/dashboard-client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-
-export default function DashboardHome() {
-  const router = useRouter()
+export default async function DashboardPage() {
+  const dashboardData = await fetchDashboardData()
   
-  useEffect(() => {
-    router.push("/members")
-  }, [router])
-  
-  return null
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col space-y-2">
+        <h2 className="text-2xl font-bold tracking-tight">Dashboard CER</h2>
+        <p className="text-muted-foreground">
+          Panoramica dell'attività della tua Comunità Energetica Rinnovabile.
+        </p>
+      </div>
+      
+      <DashboardClient dashboardData={dashboardData} />
+    </div>
+  )
 }
