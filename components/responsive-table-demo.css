@@ -1,0 +1,77 @@
+.demo-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.demo-container h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+.demo-container h3 {
+  font-size: 18px;
+  margin: 40px 0 20px;
+  color: #374151;
+}
+
+.demo-table {
+  margin-bottom: 40px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.badge.admin {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.badge.user {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.badge.moderator {
+  background-color: #f3e8ff;
+  color: #9333ea;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status.active {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.status.inactive {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.btn-small {
+  padding: 4px 8px;
+  margin: 0 4px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background-color: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-small:hover {
+  background-color: #f9fafb;
+}
