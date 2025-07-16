@@ -1,14 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import {
-  Bell,
   Calculator,
-  FileText,
-  Home,
-  LineChart,
-  Package2,
-  Users,
   Zap,
   Euro,
   TrendingUp,
@@ -39,19 +32,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import Image from "next/image"
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 
 // Configurazioni standard predefinite
 const standardConfigurations = [
@@ -98,7 +81,6 @@ const COLORS = ["#16a34a", "#2563eb", "#ea580c", "#8b5cf6", "#f59e0b"]
 
 export function EconomicSimulation() {
   const [user, setUser] = useState<any>(null)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const router = useRouter()
 
   // Parametri di simulazione
@@ -128,11 +110,6 @@ export function EconomicSimulation() {
       router.push("/login")
     }
   }, [router])
-
-  const handleLogout = () => {
-    localStorage.removeItem("user")
-    router.push("/login")
-  }
 
   const handleConfigurationChange = (configId: string) => {
     setSelectedConfig(configId)
@@ -223,482 +200,362 @@ export function EconomicSimulation() {
   }
 
   return (
-    <div
-      className={`grid min-h-screen w-full transition-all duration-300 ${sidebarCollapsed ? "md:grid-cols-[64px_1fr]" : "md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]"}`}
-    >
-      <div
-        className={`hidden border-r bg-background md:block transition-all duration-300 ${sidebarCollapsed ? "w-16" : "w-[220px] lg:w-[280px]"}`}
-      >
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 justify-between">
-            <Link
-              href="/"
-              className={`flex items-center gap-2 font-semibold ${sidebarCollapsed ? "justify-center w-full" : ""}`}
-            >
-              <Package2 className="h-6 w-6 text-green-600" />
-              {!sidebarCollapsed && <span>CER Manager</span>}
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="h-6 w-6"
-            >
-              {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </Button>
-          </div>
-          <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="/dashboard"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Dashboard" : ""}
-              >
-                <Home className="h-4 w-4" />
-                {!sidebarCollapsed && "Dashboard"}
-              </Link>
-              <Link
-                href="/"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Membri" : ""}
-              >
-                <Users className="h-4 w-4" />
-                {!sidebarCollapsed && "Membri"}
-              </Link>
-              <Link
-                href="/documents"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Documenti" : ""}
-              >
-                <FileText className="h-4 w-4" />
-                {!sidebarCollapsed && "Documenti"}
-              </Link>
-              <Link
-                href="/simulation"
-                className={`flex items-center gap-3 rounded-lg bg-accent px-3 py-2 text-accent-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Simulazione" : ""}
-              >
-                <Calculator className="h-4 w-4" />
-                {!sidebarCollapsed && "Simulazione"}
-              </Link>
-              <Link
-                href="#"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Report GSE" : ""}
-              >
-                <LineChart className="h-4 w-4" />
-                {!sidebarCollapsed && "Report GSE"}
-              </Link>
-            </nav>
-          </div>
-          {!sidebarCollapsed && (
-            <div className="mt-auto p-4">
-              <Card>
-                <CardHeader className="p-2 pt-0 md:p-4">
-                  <CardTitle>Supporto</CardTitle>
-                  <CardDescription>Hai bisogno di aiuto? Contatta il nostro team di supporto.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                  <Button size="sm" className="w-full">
-                    Contattaci
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+    <>
+      <div className="grid gap-4 lg:grid-cols-3">
+        {/* Pannello di configurazione */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calculator className="h-5 w-5" />
+                Parametri Simulazione
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Configurazioni standard */}
+              <div className="space-y-3">
+                <Label>Configurazione Standard</Label>
+                <Select value={selectedConfig} onValueChange={handleConfigurationChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleziona configurazione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {standardConfigurations.map((config) => (
+                      <SelectItem key={config.id} value={config.id}>
+                        {config.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedConfig && (
+                  <Alert>
+                    <AlertDescription>
+                      {standardConfigurations.find((c) => c.id === selectedConfig)?.description}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
+
+              {/* Parametri personalizzabili */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Numero Membri: {customParams.members}</Label>
+                  <Slider
+                    value={[customParams.members]}
+                    onValueChange={([value]) => setCustomParams((prev) => ({ ...prev, members: value }))}
+                    max={100}
+                    min={5}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Potenza Totale Impianti</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="number"
+                      value={customParams.totalPower}
+                      onChange={(e) => setCustomParams((prev) => ({ ...prev, totalPower: Number(e.target.value) }))}
+                      className="flex-1"
+                    />
+                    <span className="text-sm text-muted-foreground">kW</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Consumo Medio Annuo per Membro</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="number"
+                      value={customParams.avgConsumption}
+                      onChange={(e) =>
+                        setCustomParams((prev) => ({ ...prev, avgConsumption: Number(e.target.value) }))
+                      }
+                      className="flex-1"
+                    />
+                    <span className="text-sm text-muted-foreground">kWh</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Prezzo Energia: {customParams.energyPrice.toFixed(3)} €/kWh</Label>
+                  <Slider
+                    value={[customParams.energyPrice * 1000]}
+                    onValueChange={([value]) => setCustomParams((prev) => ({ ...prev, energyPrice: value / 1000 }))}
+                    max={400}
+                    min={150}
+                    step={5}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>% Energia Condivisa: {customParams.sharingPercentage}%</Label>
+                  <Slider
+                    value={[customParams.sharingPercentage]}
+                    onValueChange={([value]) => setCustomParams((prev) => ({ ...prev, sharingPercentage: value }))}
+                    max={90}
+                    min={30}
+                    step={5}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button onClick={runSimulation} disabled={isSimulating} className="flex-1">
+                  {isSimulating ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Simulando...
+                    </>
+                  ) : (
+                    <>
+                      <Calculator className="mr-2 h-4 w-4" />
+                      Simula
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
-          <div className="w-full flex-1">
-            <h1 className="text-lg font-semibold md:text-2xl">Simulazione Economica CER</h1>
-          </div>
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8 bg-transparent">
-            <Bell className="h-4 w-4" />
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <Image
-                  src="/placeholder.svg?height=32&width=32"
-                  width={32}
-                  height={32}
-                  alt="Avatar"
-                  className="rounded-full"
-                />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Benvenuto, {user?.name}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Impostazioni</DropdownMenuItem>
-              <DropdownMenuItem>Supporto</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <div className="grid gap-4 lg:grid-cols-3">
-            {/* Pannello di configurazione */}
-            <div className="lg:col-span-1">
+
+        {/* Risultati della simulazione */}
+        <div className="lg:col-span-2">
+          <Tabs defaultValue="overview" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="overview">Panoramica</TabsTrigger>
+              <TabsTrigger value="monthly">Andamento Mensile</TabsTrigger>
+              <TabsTrigger value="benefits">Benefici</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="space-y-4">
+              {/* KPI principali */}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Energia Condivisa</CardTitle>
+                    <Zap className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{simulationResults.sharedEnergy.toLocaleString()} kWh</div>
+                    <p className="text-xs text-muted-foreground">{simulationResults.sharingRate}% del totale</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Beneficio Totale</CardTitle>
+                    <Euro className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      €{simulationResults.totalAnnualBenefit.toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground">All'anno</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Beneficio per Membro</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">€{simulationResults.benefitPerMember}</div>
+                    <p className="text-xs text-muted-foreground">All'anno per membro</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Payback Stimato</CardTitle>
+                    <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{simulationResults.paybackYears} anni</div>
+                    <p className="text-xs text-muted-foreground">Tempo di ritorno</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Bilancio energetico */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5" />
-                    Configurazione Simulazione
-                  </CardTitle>
-                  <CardDescription>Seleziona una configurazione standard o personalizza i parametri</CardDescription>
+                  <CardTitle>Bilancio Energetico Annuale</CardTitle>
+                  <CardDescription>Confronto tra produzione e consumo della comunità</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Configurazioni standard */}
-                  <div className="space-y-3">
-                    <Label>Configurazione Standard</Label>
-                    <Select value={selectedConfig} onValueChange={handleConfigurationChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleziona configurazione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {standardConfigurations.map((config) => (
-                          <SelectItem key={config.id} value={config.id}>
-                            {config.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {selectedConfig && (
-                      <Alert>
-                        <AlertDescription>
-                          {standardConfigurations.find((c) => c.id === selectedConfig)?.description}
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                  </div>
-
-                  {/* Parametri personalizzabili */}
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Numero Membri: {customParams.members}</Label>
-                      <Slider
-                        value={[customParams.members]}
-                        onValueChange={([value]) => setCustomParams((prev) => ({ ...prev, members: value }))}
-                        max={100}
-                        min={5}
-                        step={1}
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Potenza Totale Impianti</Label>
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          type="number"
-                          value={customParams.totalPower}
-                          onChange={(e) => setCustomParams((prev) => ({ ...prev, totalPower: Number(e.target.value) }))}
-                          className="flex-1"
-                        />
-                        <span className="text-sm text-muted-foreground">kW</span>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div className="text-center p-4 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">
+                        {simulationResults.totalAnnualProduction.toLocaleString()}
                       </div>
+                      <div className="text-sm text-green-600">kWh Prodotti</div>
                     </div>
-
-                    <div className="space-y-2">
-                      <Label>Consumo Medio Annuo per Membro</Label>
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          type="number"
-                          value={customParams.avgConsumption}
-                          onChange={(e) =>
-                            setCustomParams((prev) => ({ ...prev, avgConsumption: Number(e.target.value) }))
-                          }
-                          className="flex-1"
-                        />
-                        <span className="text-sm text-muted-foreground">kWh</span>
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {simulationResults.totalAnnualConsumption.toLocaleString()}
                       </div>
+                      <div className="text-sm text-blue-600">kWh Consumati</div>
                     </div>
-
-                    <div className="space-y-2">
-                      <Label>Prezzo Energia: {customParams.energyPrice.toFixed(3)} €/kWh</Label>
-                      <Slider
-                        value={[customParams.energyPrice * 1000]}
-                        onValueChange={([value]) => setCustomParams((prev) => ({ ...prev, energyPrice: value / 1000 }))}
-                        max={400}
-                        min={150}
-                        step={5}
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>% Energia Condivisa: {customParams.sharingPercentage}%</Label>
-                      <Slider
-                        value={[customParams.sharingPercentage]}
-                        onValueChange={([value]) => setCustomParams((prev) => ({ ...prev, sharingPercentage: value }))}
-                        max={90}
-                        min={30}
-                        step={5}
-                        className="w-full"
-                      />
+                    <div className="text-center p-4 bg-orange-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">
+                        {simulationResults.sharedEnergy.toLocaleString()}
+                      </div>
+                      <div className="text-sm text-orange-600">kWh Condivisi</div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
+            <TabsContent value="monthly" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Andamento Mensile Energia</CardTitle>
+                  <CardDescription>Produzione, consumo e condivisione per mese</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <RechartsLineChart data={simulationResults.monthlyData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" stroke="#888888" fontSize={12} />
+                      <YAxis stroke="#888888" fontSize={12} unit="kWh" />
+                      <Tooltip />
+                      <Legend />
+                      <RechartsLine type="monotone" dataKey="produzione" stroke="#16a34a" name="Produzione" />
+                      <RechartsLine type="monotone" dataKey="consumo" stroke="#2563eb" name="Consumo" />
+                      <RechartsLine
+                        type="monotone"
+                        dataKey="condivisa"
+                        stroke="#ea580c"
+                        name="Condivisa"
+                        strokeWidth={3}
+                      />
+                    </RechartsLineChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Benefici Economici Mensili</CardTitle>
+                  <CardDescription>Distribuzione dei benefici durante l'anno</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={simulationResults.monthlyData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" stroke="#888888" fontSize={12} />
+                      <YAxis stroke="#888888" fontSize={12} unit="€" />
+                      <Tooltip />
+                      <Bar dataKey="beneficio" fill="#16a34a" name="Beneficio Mensile" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="benefits" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Composizione Benefici</CardTitle>
+                    <CardDescription>Suddivisione delle fonti di beneficio economico</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={simulationResults.benefitDistribution}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percentage }) => `${name}: ${percentage}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {simulationResults.benefitDistribution.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => [`€${value}`, "Valore"]} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Dettaglio Benefici Annuali</CardTitle>
+                    <CardDescription>Breakdown completo dei vantaggi economici</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                      <span className="font-medium">Incentivi GSE</span>
+                      <span className="font-bold text-green-600">
+                        €{simulationResults.incentivesBenefit.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                      <span className="font-medium">Risparmio Energia</span>
+                      <span className="font-bold text-blue-600">
+                        €{simulationResults.energySavings.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-2">
+                      <span className="font-medium">Totale Annuale</span>
+                      <span className="font-bold text-lg">
+                        €{simulationResults.totalAnnualBenefit.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="pt-4 border-t">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-green-600">
+                          €{simulationResults.benefitPerMember}
+                        </div>
+                        <div className="text-sm text-muted-foreground">Beneficio medio per membro/anno</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Esporta Risultati</CardTitle>
+                  <CardDescription>
+                    Scarica i risultati della simulazione per presentazioni o analisi
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <div className="flex gap-2">
-                    <Button onClick={runSimulation} disabled={isSimulating} className="flex-1">
-                      {isSimulating ? (
-                        <>
-                          <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                          Simulando...
-                        </>
-                      ) : (
-                        <>
-                          <Calculator className="mr-2 h-4 w-4" />
-                          Simula
-                        </>
-                      )}
+                    <Button variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Report PDF
                     </Button>
-                    <Button variant="outline" size="icon">
-                      <Save className="h-4 w-4" />
+                    <Button variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Dati Excel
+                    </Button>
+                    <Button variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Presentazione
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            </div>
-
-            {/* Risultati della simulazione */}
-            <div className="lg:col-span-2">
-              <Tabs defaultValue="overview" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="overview">Panoramica</TabsTrigger>
-                  <TabsTrigger value="monthly">Andamento Mensile</TabsTrigger>
-                  <TabsTrigger value="benefits">Benefici</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="overview" className="space-y-4">
-                  {/* KPI principali */}
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Energia Condivisa</CardTitle>
-                        <Zap className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{simulationResults.sharedEnergy.toLocaleString()} kWh</div>
-                        <p className="text-xs text-muted-foreground">{simulationResults.sharingRate}% del totale</p>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Beneficio Totale</CardTitle>
-                        <Euro className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">
-                          €{simulationResults.totalAnnualBenefit.toLocaleString()}
-                        </div>
-                        <p className="text-xs text-muted-foreground">All'anno</p>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Beneficio per Membro</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">€{simulationResults.benefitPerMember}</div>
-                        <p className="text-xs text-muted-foreground">All'anno per membro</p>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Payback Stimato</CardTitle>
-                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{simulationResults.paybackYears} anni</div>
-                        <p className="text-xs text-muted-foreground">Tempo di ritorno</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Bilancio energetico */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Bilancio Energetico Annuale</CardTitle>
-                      <CardDescription>Confronto tra produzione e consumo della comunità</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-4 md:grid-cols-3">
-                        <div className="text-center p-4 bg-green-50 rounded-lg">
-                          <div className="text-2xl font-bold text-green-600">
-                            {simulationResults.totalAnnualProduction.toLocaleString()}
-                          </div>
-                          <div className="text-sm text-green-600">kWh Prodotti</div>
-                        </div>
-                        <div className="text-center p-4 bg-blue-50 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600">
-                            {simulationResults.totalAnnualConsumption.toLocaleString()}
-                          </div>
-                          <div className="text-sm text-blue-600">kWh Consumati</div>
-                        </div>
-                        <div className="text-center p-4 bg-orange-50 rounded-lg">
-                          <div className="text-2xl font-bold text-orange-600">
-                            {simulationResults.sharedEnergy.toLocaleString()}
-                          </div>
-                          <div className="text-sm text-orange-600">kWh Condivisi</div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="monthly" className="space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Andamento Mensile Energia</CardTitle>
-                      <CardDescription>Produzione, consumo e condivisione per mese</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ResponsiveContainer width="100%" height={400}>
-                        <RechartsLineChart data={simulationResults.monthlyData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" stroke="#888888" fontSize={12} />
-                          <YAxis stroke="#888888" fontSize={12} unit="kWh" />
-                          <Tooltip />
-                          <Legend />
-                          <RechartsLine type="monotone" dataKey="produzione" stroke="#16a34a" name="Produzione" />
-                          <RechartsLine type="monotone" dataKey="consumo" stroke="#2563eb" name="Consumo" />
-                          <RechartsLine
-                            type="monotone"
-                            dataKey="condivisa"
-                            stroke="#ea580c"
-                            name="Condivisa"
-                            strokeWidth={3}
-                          />
-                        </RechartsLineChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Benefici Economici Mensili</CardTitle>
-                      <CardDescription>Distribuzione dei benefici durante l'anno</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={simulationResults.monthlyData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" stroke="#888888" fontSize={12} />
-                          <YAxis stroke="#888888" fontSize={12} unit="€" />
-                          <Tooltip />
-                          <Bar dataKey="beneficio" fill="#16a34a" name="Beneficio Mensile" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="benefits" className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Composizione Benefici</CardTitle>
-                        <CardDescription>Suddivisione delle fonti di beneficio economico</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                          <PieChart>
-                            <Pie
-                              data={simulationResults.benefitDistribution}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              label={({ name, percentage }) => `${name}: ${percentage}%`}
-                              outerRadius={80}
-                              fill="#8884d8"
-                              dataKey="value"
-                            >
-                              {simulationResults.benefitDistribution.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                              ))}
-                            </Pie>
-                            <Tooltip formatter={(value) => [`€${value}`, "Valore"]} />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Dettaglio Benefici Annuali</CardTitle>
-                        <CardDescription>Breakdown completo dei vantaggi economici</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                          <span className="font-medium">Incentivi GSE</span>
-                          <span className="font-bold text-green-600">
-                            €{simulationResults.incentivesBenefit.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                          <span className="font-medium">Risparmio Energia</span>
-                          <span className="font-bold text-blue-600">
-                            €{simulationResults.energySavings.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border-2">
-                          <span className="font-medium">Totale Annuale</span>
-                          <span className="font-bold text-lg">
-                            €{simulationResults.totalAnnualBenefit.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="pt-4 border-t">
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-green-600">
-                              €{simulationResults.benefitPerMember}
-                            </div>
-                            <div className="text-sm text-muted-foreground">Beneficio medio per membro/anno</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Esporta Risultati</CardTitle>
-                      <CardDescription>
-                        Scarica i risultati della simulazione per presentazioni o analisi
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex gap-2">
-                        <Button variant="outline">
-                          <Download className="mr-2 h-4 w-4" />
-                          Report PDF
-                        </Button>
-                        <Button variant="outline">
-                          <Download className="mr-2 h-4 w-4" />
-                          Dati Excel
-                        </Button>
-                        <Button variant="outline">
-                          <Download className="mr-2 h-4 w-4" />
-                          Presentazione
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-        </main>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
