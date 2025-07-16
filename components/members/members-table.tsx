@@ -71,22 +71,22 @@ export function MembersTable({ initialData }: MembersTableProps) {
   const columns = [
     {
       key: 'name',
-      label: 'Nome',
+      header: 'Nome',
       sortable: true,
-      render: (member: Member) => (
+      accessor: (member: Member) => (
         <div className="font-medium">{member.name}</div>
       )
     },
     {
       key: 'email',
-      label: 'Email',
+      header: 'Email',
       className: 'hidden md:table-cell',
-      render: (member: Member) => member.email
+      accessor: (member: Member) => member.email
     },
     {
       key: 'role',
-      label: 'Ruolo',
-      render: (member: Member) => (
+      header: 'Ruolo',
+      accessor: (member: Member) => (
         <Badge variant={member.role === 'Produttore' ? 'default' : 'secondary'}>
           {member.role}
         </Badge>
@@ -94,8 +94,8 @@ export function MembersTable({ initialData }: MembersTableProps) {
     },
     {
       key: 'status',
-      label: 'Stato',
-      render: (member: Member) => (
+      header: 'Stato',
+      accessor: (member: Member) => (
         <Badge variant={member.status === 'Attivo' ? 'default' : 'outline'}>
           {member.status}
         </Badge>
@@ -103,14 +103,14 @@ export function MembersTable({ initialData }: MembersTableProps) {
     },
     {
       key: 'energyShared',
-      label: 'Energia Condivisa',
+      header: 'Energia Condivisa',
       className: 'hidden lg:table-cell',
-      render: (member: Member) => member.energyShared
+      accessor: (member: Member) => member.energyShared
     },
     {
       key: 'actions',
-      label: '',
-      render: (member: Member) => (
+      header: '',
+      accessor: (member: Member) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -222,7 +222,8 @@ export function MembersTable({ initialData }: MembersTableProps) {
       <ResponsiveTableAdvanced 
         columns={columns} 
         data={filteredMembers}
-        pageSize={10}
+        getRowKey={(member, index) => member.id}
+        itemsPerPage={10}
       />
 
       {/* Edit Dialog */}
