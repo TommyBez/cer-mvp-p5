@@ -522,7 +522,7 @@ export function DeviceManagement() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   ),
-                  className: 'text-right actions',
+                  className: 'text-right',
                   priority: 1
                 }
               ]}

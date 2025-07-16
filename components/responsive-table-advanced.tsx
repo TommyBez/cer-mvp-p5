@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import './responsive-table.css'
+import { ChevronUp, ChevronDown } from 'lucide-react'
 
 interface Column<T> {
   key: keyof T | string
@@ -124,162 +124,179 @@ export function ResponsiveTableAdvanced<T>({
 
   if (loading) {
     return (
-      <div className="responsive-table-container loading">
-        <div className="responsive-table-loading">Loading...</div>
+      <div className="flex items-center justify-center py-8">
+        <div className="text-muted-foreground">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className={`responsive-table-container ${className}`} data-mobile-layout={mobileLayout}>
+    <div className={`w-full ${className}`}>
       {/* Controls */}
       {(enableFiltering || enablePagination) && (
-        <div className="responsive-table-controls">
+        <div className="mb-4 flex flex-col sm:flex-row gap-4">
           {enableFiltering && (
             <input
               type="text"
               placeholder="Search..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="responsive-table-search"
+              className="flex-1 max-w-sm px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
           )}
         </div>
       )}
 
       {/* Desktop Table View */}
-      <table className="responsive-table desktop-view">
-        <thead>
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={col.key as string}
-                className={`${col.className || ''} ${col.sortable ? 'sortable' : ''}`}
-                style={{ width: col.width }}
-                onClick={() => col.sortable && handleSort(col.key as string)}
-              >
-                <div className="th-content">
-                  {col.header}
-                  {col.sortable && sortConfig?.key === col.key && (
-                    <span className="sort-indicator">
-                      {sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}
-                    </span>
-                  )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedData.length === 0 ? (
-            <tr>
-              <td colSpan={columns.length} className="responsive-table-empty">
-                {emptyMessage}
-              </td>
-            </tr>
-          ) : (
-            paginatedData.map((item, index) => (
-              <tr
-                key={getRowKey(item, index)}
-                onClick={() => onRowClick?.(item)}
-                className={onRowClick ? 'clickable' : ''}
-              >
-                {columns.map((col) => (
-                  <td key={col.key as string} className={col.className}>
-                    {col.accessor(item)}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-
-      {/* Mobile Card View */}
-      {mobileLayout === 'card' && (
-        <div className="mobile-cards">
-          {paginatedData.length === 0 ? (
-            <div className="responsive-table-empty">{emptyMessage}</div>
-          ) : (
-            paginatedData.map((item, index) => (
-              <div
-                key={getRowKey(item, index)}
-                className={`mobile-card ${onRowClick ? 'clickable' : ''}`}
-                onClick={() => onRowClick?.(item)}
-              >
-                {sortedColumns.map((col) => (
-                  <div key={col.key as string} className="mobile-card-item">
-                    <span className="mobile-card-label">{col.header}:</span>
-                    <span className="mobile-card-value">{col.accessor(item)}</span>
-                  </div>
-                ))}
-              </div>
-            ))
-          )}
-        </div>
-      )}
-
-      {/* Mobile Horizontal Scroll View */}
-      {mobileLayout === 'scroll' && (
-        <div className="mobile-scroll-wrapper">
-          <table className="responsive-table mobile-scroll-view">
-            <thead>
-              <tr>
-                {columns.map((col) => (
-                  <th
-                    key={col.key as string}
-                    className={col.className}
-                    style={{ width: col.width }}
-                  >
+      <div className="hidden md:block">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b">
+              {columns.map((col) => (
+                <th
+                  key={col.key as string}
+                  className={`px-4 py-3 text-left text-sm font-medium text-muted-foreground ${
+                    col.sortable ? 'cursor-pointer select-none hover:text-foreground' : ''
+                  } ${col.className || ''}`}
+                  style={{ width: col.width }}
+                  onClick={() => col.sortable && handleSort(col.key as string)}
+                >
+                  <div className="flex items-center gap-1">
                     {col.header}
-                  </th>
-                ))}
+                    {col.sortable && sortConfig?.key === col.key && (
+                      <span className="text-primary">
+                        {sortConfig.direction === 'asc' ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </span>
+                    )}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedData.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className="px-4 py-8 text-center text-muted-foreground">
+                  {emptyMessage}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={columns.length} className="responsive-table-empty">
-                    {emptyMessage}
-                  </td>
+            ) : (
+              paginatedData.map((item, index) => (
+                <tr
+                  key={getRowKey(item, index)}
+                  onClick={() => onRowClick?.(item)}
+                  className={`border-b transition-colors hover:bg-muted/50 ${
+                    onRowClick ? 'cursor-pointer' : ''
+                  }`}
+                >
+                  {columns.map((col) => (
+                    <td key={col.key as string} className={`px-4 py-3 text-sm ${col.className || ''}`}>
+                      {col.accessor(item)}
+                    </td>
+                  ))}
                 </tr>
-              ) : (
-                paginatedData.map((item, index) => (
-                  <tr
-                    key={getRowKey(item, index)}
-                    onClick={() => onRowClick?.(item)}
-                    className={onRowClick ? 'clickable' : ''}
-                  >
-                    {columns.map((col) => (
-                      <td key={col.key as string} className={col.className}>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile View */}
+      <div className="md:hidden">
+        {mobileLayout === 'card' ? (
+          // Card Layout for Mobile
+          <div className="space-y-3">
+            {paginatedData.length === 0 ? (
+              <div className="py-8 text-center text-muted-foreground">{emptyMessage}</div>
+            ) : (
+              paginatedData.map((item, index) => (
+                <div
+                  key={getRowKey(item, index)}
+                  onClick={() => onRowClick?.(item)}
+                  className={`bg-card rounded-lg border p-4 space-y-3 ${
+                    onRowClick ? 'cursor-pointer active:scale-[0.98] transition-transform' : ''
+                  }`}
+                >
+                  {sortedColumns.map((col) => (
+                    <div key={col.key as string} className="flex flex-col gap-1">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {col.header}
+                      </span>
+                      <span className={`text-sm ${col.className || ''}`}>
                         {col.accessor(item)}
-                      </td>
-                    ))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ))
+            )}
+          </div>
+        ) : (
+          // Horizontal Scroll Layout for Mobile
+          <div className="overflow-x-auto -mx-4 px-4">
+            <table className="w-full min-w-[600px] border-collapse">
+              <thead>
+                <tr className="border-b">
+                  {columns.map((col) => (
+                    <th
+                      key={col.key as string}
+                      className={`px-4 py-3 text-left text-sm font-medium text-muted-foreground whitespace-nowrap ${col.className || ''}`}
+                      style={{ width: col.width }}
+                    >
+                      {col.header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={columns.length} className="px-4 py-8 text-center text-muted-foreground">
+                      {emptyMessage}
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                ) : (
+                  paginatedData.map((item, index) => (
+                    <tr
+                      key={getRowKey(item, index)}
+                      onClick={() => onRowClick?.(item)}
+                      className={`border-b ${onRowClick ? 'cursor-pointer' : ''}`}
+                    >
+                      {columns.map((col) => (
+                        <td key={col.key as string} className={`px-4 py-3 text-sm ${col.className || ''}`}>
+                          {col.accessor(item)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* Pagination */}
       {enablePagination && totalPages > 1 && (
-        <div className="responsive-table-pagination">
+        <div className="mt-4 flex items-center justify-center gap-2">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="pagination-btn"
+            className="px-3 py-1 text-sm border rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted"
           >
             Previous
           </button>
-          <span className="pagination-info">
+          <span className="text-sm text-muted-foreground">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="pagination-btn"
+            className="px-3 py-1 text-sm border rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted"
           >
             Next
           </button>

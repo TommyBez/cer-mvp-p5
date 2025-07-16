@@ -352,7 +352,7 @@ export function DocumentsManagement() {
                       </Button>
                     </div>
                   ),
-                  className: 'text-right actions',
+                  className: 'text-right',
                   priority: 1
                 }
               ]}

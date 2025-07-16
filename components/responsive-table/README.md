@@ -1,16 +1,16 @@
 # Responsive Table Component
 
-A CSS-first responsive table component for React/Next.js applications that provides excellent mobile experience with two layout options: card view and horizontal scroll.
+A Tailwind CSS-based responsive table component for React/Next.js applications that provides excellent mobile experience with two layout options: card view and horizontal scroll.
 
 ## Features
 
-- **CSS-First Approach**: Minimal JavaScript, leveraging CSS for responsive behavior
+- **Tailwind CSS Based**: Uses utility classes for all styling
 - **Two Mobile Layouts**: Card view (default) or horizontal scroll
 - **Column Priority**: Control which columns appear first on mobile
 - **Advanced Features**: Sorting, filtering, pagination (in advanced version)
 - **TypeScript Support**: Fully typed with generics
-- **Dark Mode Support**: CSS variables for theming
-- **Print Friendly**: Optimized print styles
+- **Dark Mode Support**: Works with Tailwind's dark mode
+- **Clean Mobile Cards**: Beautiful card layout on mobile devices
 
 ## Installation
 
@@ -145,30 +145,19 @@ All of the above, plus:
 | `emptyMessage` | `string` | `'No data available'` | Empty state message |
 | `loading` | `boolean` | `false` | Loading state |
 
-## CSS Customization
+## Styling with Tailwind
 
-The component uses CSS variables for theming:
+The component uses standard Tailwind CSS classes. You can customize the appearance by:
 
-```css
-:root {
-  --background: #ffffff;
-  --background-secondary: #f9fafb;
-  --background-hover: #f9fafb;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --border-color: #e5e7eb;
-  --border-color-light: #f3f4f6;
-  --primary-color: #3b82f6;
-}
-```
+1. Passing custom `className` props to columns
+2. Using Tailwind's built-in utilities like `text-right`, `font-mono`, etc.
+3. Leveraging your app's existing theme classes
 
-## Utility Classes
-
-The component provides several utility classes:
-
-- `.numeric` - Right-aligned, tabular numbers
-- `.actions` - Center-aligned, no wrap
-- `.truncate` - Ellipsis overflow for long text
+Common column classes:
+- `text-right` - Right-align content (good for numbers)
+- `font-mono` - Monospace font (good for numeric data)
+- `text-center` - Center-align content
+- Any other Tailwind utility classes
 
 ## Mobile Layouts
 

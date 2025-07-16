@@ -511,7 +511,7 @@ export function GSEReportsManagement() {
                             header: 'Energia Consumata',
                             accessor: (member) => `${member.consumed} kWh`,
                             sortable: true,
-                            className: 'numeric',
+                            className: 'text-right font-mono',
                             priority: 7
                           },
                           {
@@ -519,7 +519,7 @@ export function GSEReportsManagement() {
                             header: 'Energia Condivisa',
                             accessor: (member) => `${member.shared} kWh`,
                             sortable: true,
-                            className: 'numeric',
+                            className: 'text-right font-mono',
                             priority: 8
                           },
                           {
@@ -527,7 +527,7 @@ export function GSEReportsManagement() {
                             header: 'Incentivo',
                             accessor: (member) => `€${member.incentive.toFixed(2)}`,
                             sortable: true,
-                            className: 'numeric',
+                            className: 'text-right font-mono',
                             priority: 9
                           },
                           {
@@ -535,7 +535,7 @@ export function GSEReportsManagement() {
                             header: '% sul Totale',
                             accessor: (member) => `${((member.incentive / calculationResults.totalIncentive) * 100).toFixed(1)}%`,
                             sortable: true,
-                            className: 'numeric',
+                            className: 'text-right font-mono',
                             priority: 5
                           }
                         ]}
@@ -667,7 +667,7 @@ export function GSEReportsManagement() {
                         header: 'Energia Condivisa',
                         accessor: (report) => `${report.energyShared.toLocaleString()} kWh`,
                         sortable: true,
-                        className: 'numeric',
+                        className: 'text-right font-mono',
                         priority: 6
                       },
                       {
@@ -675,7 +675,7 @@ export function GSEReportsManagement() {
                         header: 'Incentivi',
                         accessor: (report) => `€${report.incentiveAmount.toLocaleString()}`,
                         sortable: true,
-                        className: 'numeric',
+                        className: 'text-right font-mono',
                         priority: 9
                       },
                       {
@@ -717,7 +717,7 @@ export function GSEReportsManagement() {
                             </DropdownMenuContent>
                           </DropdownMenu>
                         ),
-                        className: 'text-right actions',
+                        className: 'text-right',
                         priority: 1
                       }
                     ]}

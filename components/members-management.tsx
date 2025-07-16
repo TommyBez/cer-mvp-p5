@@ -397,7 +397,7 @@ export function MembersManagement() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   ),
-                  className: 'actions',
+                  className: 'text-right',
                   priority: 1
                 }
               ]}
