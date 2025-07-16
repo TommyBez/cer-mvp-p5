@@ -129,7 +129,7 @@ export const ResponsiveDialogDescription = React.forwardRef<
 })
 ResponsiveDialogDescription.displayName = "ResponsiveDialogDescription"
 
-// Export all components
+// Export all components with aliased names
 export {
   ResponsiveDialog as Dialog,
   ResponsiveDialogTrigger as DialogTrigger,
@@ -138,12 +138,4 @@ export {
   ResponsiveDialogFooter as DialogFooter,
   ResponsiveDialogTitle as DialogTitle,
   ResponsiveDialogDescription as DialogDescription,
-  // Keep the original names as well for flexibility
-  ResponsiveDialog,
-  ResponsiveDialogTrigger,
-  ResponsiveDialogContent,
-  ResponsiveDialogHeader,
-  ResponsiveDialogFooter,
-  ResponsiveDialogTitle,
-  ResponsiveDialogDescription,
 }

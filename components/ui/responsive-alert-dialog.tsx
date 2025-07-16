@@ -139,7 +139,7 @@ export const ResponsiveAlertDialogDescription = React.forwardRef<
 })
 ResponsiveAlertDialogDescription.displayName = "ResponsiveAlertDialogDescription"
 
-// Export all components with both naming conventions
+// Export all components with aliased names
 export {
   ResponsiveAlertDialog as AlertDialog,
   ResponsiveAlertDialogTrigger as AlertDialogTrigger,
@@ -151,12 +151,4 @@ export {
   // Keep original AlertDialog exports
   AlertDialogAction,
   AlertDialogCancel,
-  // Keep the original names as well
-  ResponsiveAlertDialog,
-  ResponsiveAlertDialogTrigger,
-  ResponsiveAlertDialogContent,
-  ResponsiveAlertDialogHeader,
-  ResponsiveAlertDialogFooter,
-  ResponsiveAlertDialogTitle,
-  ResponsiveAlertDialogDescription,
 }
