@@ -187,11 +187,39 @@ export function MembersManagementClient({ members }: MembersManagementClientProp
     <Card>
       <CardHeader>
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-          <div>
-            <CardTitle>Membri della CER</CardTitle>
-            <CardDescription>
-              Gestisci i membri della tua Comunità Energetica Rinnovabile.
-            </CardDescription>
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Cerca membri..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Filtra per stato" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tutti gli stati</SelectItem>
+                <SelectItem value="Attivo">Attivo</SelectItem>
+                <SelectItem value="Inattivo">Inattivo</SelectItem>
+                <SelectItem value="In attesa">In attesa</SelectItem>
+                <SelectItem value="Sospeso">Sospeso</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Filtra per ruolo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tutti i ruoli</SelectItem>
+                <SelectItem value="Produttore">Produttore</SelectItem>
+                <SelectItem value="Consumatore">Consumatore</SelectItem>
+                <SelectItem value="Prosumer">Prosumer</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
@@ -263,41 +291,6 @@ export function MembersManagementClient({ members }: MembersManagementClientProp
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
-        
-        <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Cerca membri..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Filtra per stato" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tutti gli stati</SelectItem>
-              <SelectItem value="Attivo">Attivo</SelectItem>
-              <SelectItem value="Inattivo">Inattivo</SelectItem>
-              <SelectItem value="In attesa">In attesa</SelectItem>
-              <SelectItem value="Sospeso">Sospeso</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Filtra per ruolo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tutti i ruoli</SelectItem>
-              <SelectItem value="Produttore">Produttore</SelectItem>
-              <SelectItem value="Consumatore">Consumatore</SelectItem>
-              <SelectItem value="Prosumer">Prosumer</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </CardHeader>
       

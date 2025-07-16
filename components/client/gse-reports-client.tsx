@@ -149,40 +149,33 @@ export function GSEReportsClient({ reports }: GSEReportsClientProps) {
     <Card>
       <CardHeader>
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-          <div>
-            <CardTitle>Report GSE</CardTitle>
-            <CardDescription>
-              Gestisci i report da inviare al Gestore dei Servizi Energetici.
-            </CardDescription>
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Cerca report..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Filtra per stato" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tutti gli stati</SelectItem>
+                <SelectItem value="Inviato">Inviato</SelectItem>
+                <SelectItem value="Approvato">Approvato</SelectItem>
+                <SelectItem value="In preparazione">In preparazione</SelectItem>
+                <SelectItem value="Rifiutato">Rifiutato</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Nuovo Report
           </Button>
-        </div>
-        
-        <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Cerca report..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Filtra per stato" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tutti gli stati</SelectItem>
-              <SelectItem value="Inviato">Inviato</SelectItem>
-              <SelectItem value="Approvato">Approvato</SelectItem>
-              <SelectItem value="In preparazione">In preparazione</SelectItem>
-              <SelectItem value="Rifiutato">Rifiutato</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </CardHeader>
       

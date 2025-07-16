@@ -192,11 +192,28 @@ export function DocumentsManagementClient({ documents }: DocumentsManagementClie
     <Card>
       <CardHeader>
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-          <div>
-            <CardTitle>Documenti CER</CardTitle>
-            <CardDescription>
-              Gestisci tutti i documenti della Comunità Energetica.
-            </CardDescription>
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Cerca documenti..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={selectedType} onValueChange={setSelectedType}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Filtra per tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tutti i tipi</SelectItem>
+                <SelectItem value="Contratto">Contratto</SelectItem>
+                <SelectItem value="Fattura">Fattura</SelectItem>
+                <SelectItem value="Tecnico">Documento Tecnico</SelectItem>
+                <SelectItem value="Report">Report</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
             <DialogTrigger asChild>
@@ -262,30 +279,6 @@ export function DocumentsManagementClient({ documents }: DocumentsManagementClie
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
-        
-        <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Cerca documenti..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={selectedType} onValueChange={setSelectedType}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Filtra per tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tutti i tipi</SelectItem>
-              <SelectItem value="Contratto">Contratto</SelectItem>
-              <SelectItem value="Fattura">Fattura</SelectItem>
-              <SelectItem value="Tecnico">Documento Tecnico</SelectItem>
-              <SelectItem value="Report">Report</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </CardHeader>
       

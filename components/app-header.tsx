@@ -1,5 +1,1 @@
-import { HeaderClient } from "./client/header-client"
-
-export function AppHeader() {
-  return <HeaderClient />
-}
+export { HeaderClient as AppHeader } from "./client/header-client"
