@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTableAdvanced } from "@/components/responsive-table-advanced"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
@@ -310,68 +310,105 @@ export function MembersManagement() {
           </div>
           
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Ruolo</TableHead>
-                  <TableHead>Stato</TableHead>
-                  <TableHead>Energia Condivisa</TableHead>
-                  <TableHead>Data Iscrizione</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMembers.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell className="font-medium">{member.name}</TableCell>
-                    <TableCell>{member.email}</TableCell>
-                    <TableCell>
-                      <Badge variant={getRoleBadgeVariant(member.role)}>{member.role}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={getStatusBadgeVariant(member.status) as "default" | "secondary" | "outline"}
-                      >
-                        {member.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{member.energyShared}</TableCell>
-                    <TableCell>{member.joinDate}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Apri menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedMember(member)
-                              setIsViewDialogOpen(true)
-                            }}
-                          >
-                            Visualizza dettagli
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Modifica
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Elimina
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <ResponsiveTableAdvanced
+              data={filteredMembers}
+              columns={[
+                {
+                  key: 'name',
+                  header: 'Nome',
+                  accessor: (member) => <span className="font-medium">{member.name}</span>,
+                  sortable: true,
+                  filterable: true,
+                  priority: 10
+                },
+                {
+                  key: 'email',
+                  header: 'Email',
+                  accessor: (member) => member.email,
+                  sortable: true,
+                  filterable: true,
+                  priority: 8
+                },
+                {
+                  key: 'role',
+                  header: 'Ruolo',
+                  accessor: (member) => (
+                    <Badge variant={getRoleBadgeVariant(member.role)}>{member.role}</Badge>
+                  ),
+                  sortable: true,
+                  priority: 6
+                },
+                {
+                  key: 'status',
+                  header: 'Stato',
+                  accessor: (member) => (
+                    <Badge
+                      variant={getStatusBadgeVariant(member.status) as "default" | "secondary" | "outline"}
+                    >
+                      {member.status}
+                    </Badge>
+                  ),
+                  sortable: true,
+                  priority: 7
+                },
+                {
+                  key: 'energyShared',
+                  header: 'Energia Condivisa',
+                  accessor: (member) => member.energyShared,
+                  sortable: true,
+                  priority: 4
+                },
+                {
+                  key: 'joinDate',
+                  header: 'Data Iscrizione',
+                  accessor: (member) => member.joinDate,
+                  sortable: true,
+                  priority: 5
+                },
+                {
+                  key: 'actions',
+                  header: '',
+                  accessor: (member) => (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Apri menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedMember(member)
+                            setIsViewDialogOpen(true)
+                          }}
+                        >
+                          Visualizza dettagli
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Modifica
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-red-600">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Elimina
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ),
+                  className: 'actions',
+                  priority: 1
+                }
+              ]}
+              getRowKey={(member) => member.id}
+              enableFiltering={false} // We already have custom filtering
+              enableSorting={true}
+              enablePagination={true}
+              itemsPerPage={10}
+              emptyMessage="Nessun membro trovato"
+              mobileLayout="card"
+            />
           </div>
         </CardContent>
       </Card>

@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/responsive-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -273,37 +273,49 @@ export function MemberDashboard() {
               <CardDescription>Documenti essenziali e report disponibili per il download</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome Documento</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Dimensione</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead className="text-right">Azioni</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {documentsData.map((document) => (
-                    <TableRow key={document.id}>
-                      <TableCell>
-                        <div className="font-medium">{document.name}</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{document.type}</Badge>
-                      </TableCell>
-                      <TableCell>{document.size}</TableCell>
-                      <TableCell>{new Date(document.date).toLocaleDateString("it-IT")}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          <Download className="mr-2 h-4 w-4" />
-                          Scarica
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <ResponsiveTable
+                data={documentsData}
+                columns={[
+                  {
+                    key: 'name',
+                    header: 'Nome Documento',
+                    accessor: (document) => <div className="font-medium">{document.name}</div>,
+                    priority: 10
+                  },
+                  {
+                    key: 'type',
+                    header: 'Tipo',
+                    accessor: (document) => <Badge variant="secondary">{document.type}</Badge>,
+                    priority: 6
+                  },
+                  {
+                    key: 'size',
+                    header: 'Dimensione',
+                    accessor: (document) => document.size,
+                    priority: 4
+                  },
+                  {
+                    key: 'date',
+                    header: 'Data',
+                    accessor: (document) => new Date(document.date).toLocaleDateString("it-IT"),
+                    priority: 5
+                  },
+                  {
+                    key: 'actions',
+                    header: 'Azioni',
+                    accessor: () => (
+                      <Button variant="ghost" size="sm">
+                        <Download className="mr-2 h-4 w-4" />
+                        Scarica
+                      </Button>
+                    ),
+                    className: 'text-right',
+                    priority: 1
+                  }
+                ]}
+                getRowKey={(document) => document.id}
+                mobileLayout="card"
+              />
             </CardContent>
           </Card>
         </main>
