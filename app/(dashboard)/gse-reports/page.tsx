@@ -1,6 +1,4 @@
-import { Suspense } from "react"
 import { GSEReportsContent } from "@/components/gse-reports-content"
-import { GSEReportsSkeleton } from "@/components/gse-reports-skeleton"
 
 // Simulate async data fetching
 async function getGSEReportsData() {
@@ -77,9 +75,5 @@ async function getGSEReportsData() {
 export default async function GseReportsPage() {
   const reportsData = await getGSEReportsData()
   
-  return (
-    <Suspense fallback={<GSEReportsSkeleton />}>
-      <GSEReportsContent initialData={reportsData} />
-    </Suspense>
-  )
+  return <GSEReportsContent initialData={reportsData} />
 }

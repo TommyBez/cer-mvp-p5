@@ -1,6 +1,4 @@
-import { Suspense } from "react"
 import { MembersContent } from "@/components/members-content"
-import { MembersSkeleton } from "@/components/members-skeleton"
 
 // Simulate async data fetching
 async function getMembersData() {
@@ -84,9 +82,5 @@ async function getMembersData() {
 export default async function MembersPage() {
   const membersData = await getMembersData()
   
-  return (
-    <Suspense fallback={<MembersSkeleton />}>
-      <MembersContent initialData={membersData} />
-    </Suspense>
-  )
+  return <MembersContent initialData={membersData} />
 }

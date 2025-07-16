@@ -1,6 +1,4 @@
-import { Suspense } from "react"
 import { SimulationContent } from "@/components/simulation-content"
-import { SimulationSkeleton } from "@/components/simulation-skeleton"
 
 // Simulate async data fetching
 async function getSimulationData() {
@@ -62,9 +60,5 @@ async function getSimulationData() {
 export default async function SimulationPage() {
   const simulationData = await getSimulationData()
   
-  return (
-    <Suspense fallback={<SimulationSkeleton />}>
-      <SimulationContent initialData={simulationData} />
-    </Suspense>
-  )
+  return <SimulationContent initialData={simulationData} />
 }

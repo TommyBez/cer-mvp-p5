@@ -1,6 +1,4 @@
-import { Suspense } from "react"
 import { DocumentsContent } from "@/components/documents-content"
-import { DocumentsSkeleton } from "@/components/documents-skeleton"
 
 // Simulate async data fetching
 async function getDocumentsData() {
@@ -74,9 +72,5 @@ async function getDocumentsData() {
 export default async function DocumentsPage() {
   const documentsData = await getDocumentsData()
   
-  return (
-    <Suspense fallback={<DocumentsSkeleton />}>
-      <DocumentsContent initialData={documentsData} />
-    </Suspense>
-  )
+  return <DocumentsContent initialData={documentsData} />
 }

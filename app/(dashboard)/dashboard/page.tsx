@@ -1,6 +1,4 @@
-import { Suspense } from "react"
 import { DashboardContent } from "@/components/dashboard-content"
-import { DashboardSkeleton } from "@/components/dashboard-skeleton"
 
 // Simulate async data fetching
 async function getDashboardData() {
@@ -54,9 +52,5 @@ async function getDashboardData() {
 export default async function DashboardPage() {
   const dashboardData = await getDashboardData()
   
-  return (
-    <Suspense fallback={<DashboardSkeleton />}>
-      <DashboardContent initialData={dashboardData} />
-    </Suspense>
-  )
+  return <DashboardContent initialData={dashboardData} />
 }
