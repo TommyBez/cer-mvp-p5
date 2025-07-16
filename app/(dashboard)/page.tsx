@@ -1,14 +1,6 @@
-"use client"
-
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { redirect } from "next/navigation"
 
 export default function DashboardHome() {
-  const router = useRouter()
-  
-  useEffect(() => {
-    router.push("/members")
-  }, [router])
-  
-  return null
+  // Server-side redirect keeps this component fully on the server.
+  redirect("/members")
 }
