@@ -2,8 +2,14 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
+  Calculator,
+  FileText,
+  Home,
+  LineChart,
   Package2,
+  Users,
 } from "lucide-react"
 
 import {
@@ -21,9 +27,38 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { SidebarNavigationClient } from "@/components/sidebar-navigation-client"
+
+const menuItems = [
+  {
+    title: "Dashboard",
+    icon: Home,
+    href: "/dashboard",
+  },
+  {
+    title: "Membri",
+    icon: Users,
+    href: "/members",
+  },
+  {
+    title: "Documenti",
+    icon: FileText,
+    href: "/documents",
+  },
+  {
+    title: "Simulazione",
+    icon: Calculator,
+    href: "/simulation",
+  },
+  {
+    title: "Report GSE",
+    icon: LineChart,
+    href: "/gse-reports",
+  },
+]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
+  
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -47,7 +82,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarNavigationClient />
+            <SidebarMenu>
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton asChild isActive={pathname === item.href}>
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
