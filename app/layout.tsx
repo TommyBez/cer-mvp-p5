@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 import './globals.css'
+import { SidebarProvider } from '@/components/ui/sidebar'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'CER Manager',
+  description: 'Community Energy Resource Management System',
 }
 
 export default function RootLayout({
@@ -13,8 +16,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="it" suppressHydrationWarning>
+      <body className={inter.className}>
+        <SidebarProvider>
+          {children}
+        </SidebarProvider>
+      </body>
     </html>
   )
 }

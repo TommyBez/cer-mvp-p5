@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Bell, Calculator, FileText, Home, LineChart, Package2, Power, Share2, Users, Zap } from "lucide-react"
+import { Bell, Calculator, FileText, Home, LineChart, Package2, Power, Share2, Users, Zap, Router } from "lucide-react"
 import {
   LineChart as RechartsLineChart,
   Line as RechartsLine,
@@ -30,19 +30,26 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
-const chartData = [
-  { name: "Lun", produzione: 400, consumo: 240 },
-  { name: "Mar", produzione: 300, consumo: 139 },
-  { name: "Mer", produzione: 200, consumo: 980 },
-  { name: "Gio", produzione: 278, consumo: 390 },
-  { name: "Ven", produzione: 189, consumo: 480 },
-  { name: "Sab", produzione: 239, consumo: 380 },
-  { name: "Dom", produzione: 349, consumo: 430 },
-]
-
 export function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [realTimeData, setRealTimeData] = useState({
+    totalProduced: 0,
+    totalConsumed: 0,
+    totalShared: 0,
+    instantPower: 0,
+    deviceCount: 0,
+    onlineDevices: 0,
+  })
+  const [chartData, setChartData] = useState([
+    { name: "Lun", produzione: 400, consumo: 240 },
+    { name: "Mar", produzione: 300, consumo: 139 },
+    { name: "Mer", produzione: 200, consumo: 980 },
+    { name: "Gio", produzione: 278, consumo: 390 },
+    { name: "Ven", produzione: 189, consumo: 480 },
+    { name: "Sab", produzione: 239, consumo: 380 },
+    { name: "Dom", produzione: 349, consumo: 430 },
+  ])
   const router = useRouter()
 
   useEffect(() => {
@@ -58,6 +65,52 @@ export function Dashboard() {
       router.push("/login")
     }
   }, [router])
+
+  // Simulate real-time data updates from IoT devices
+  useEffect(() => {
+    const fetchDeviceData = async () => {
+      try {
+        // Fetch device summary data
+        const response = await fetch('/api/devices')
+        const data = await response.json()
+        const devices = data.devices || []
+        
+        // Calculate aggregated real-time values
+        let totalProduced = 0
+        let totalConsumed = 0
+        let instantPower = 0
+        let onlineCount = 0
+        
+        devices.forEach((device: any) => {
+          if (device.status === 'online' && device.lastReading) {
+            totalProduced += device.lastReading.energyProduced || 0
+            totalConsumed += device.lastReading.energyConsumed || 0
+            instantPower += device.lastReading.instantPower || 0
+            onlineCount++
+          }
+        })
+        
+        setRealTimeData({
+          totalProduced: 1250 + totalProduced, // Base value + real-time
+          totalConsumed: 975 + totalConsumed,
+          totalShared: Math.max(0, (1250 + totalProduced) - (975 + totalConsumed)),
+          instantPower,
+          deviceCount: devices.length,
+          onlineDevices: onlineCount,
+        })
+      } catch (error) {
+        console.error('Failed to fetch device data:', error)
+      }
+    }
+
+    // Initial fetch
+    fetchDeviceData()
+    
+    // Update every 5 seconds
+    const interval = setInterval(fetchDeviceData, 5000)
+    
+    return () => clearInterval(interval)
+  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("user")
@@ -110,6 +163,14 @@ export function Dashboard() {
               >
                 <Users className="h-4 w-4" />
                 {!sidebarCollapsed && "Membri"}
+              </Link>
+              <Link
+                href="/devices"
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
+                title={sidebarCollapsed ? "Dispositivi IoT" : ""}
+              >
+                <Router className="h-4 w-4" />
+                {!sidebarCollapsed && "Dispositivi IoT"}
               </Link>
               <Link
                 href="/documents"
@@ -194,8 +255,15 @@ export function Dashboard() {
                 <Zap className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">1,250 kWh</div>
-                <p className="text-xs text-muted-foreground">+20.1% rispetto al mese scorso</p>
+                <div className="text-2xl font-bold">{realTimeData.totalProduced.toFixed(0)} kWh</div>
+                <p className="text-xs text-muted-foreground">
+                  {realTimeData.onlineDevices > 0 && (
+                    <span className="text-green-600">● {realTimeData.onlineDevices} dispositivi online</span>
+                  )}
+                  {realTimeData.onlineDevices === 0 && (
+                    <span>+20.1% rispetto al mese scorso</span>
+                  )}
+                </p>
               </CardContent>
             </Card>
             <Card>
@@ -204,8 +272,15 @@ export function Dashboard() {
                 <Power className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">975 kWh</div>
-                <p className="text-xs text-muted-foreground">+18.3% rispetto al mese scorso</p>
+                <div className="text-2xl font-bold">{realTimeData.totalConsumed.toFixed(0)} kWh</div>
+                <p className="text-xs text-muted-foreground">
+                  {realTimeData.instantPower > 0 && (
+                    <span>Potenza istantanea: {realTimeData.instantPower.toFixed(1)} kW</span>
+                  )}
+                  {realTimeData.instantPower === 0 && (
+                    <span>+18.3% rispetto al mese scorso</span>
+                  )}
+                </p>
               </CardContent>
             </Card>
             <Card>
@@ -214,8 +289,15 @@ export function Dashboard() {
                 <Share2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">275 kWh</div>
-                <p className="text-xs text-muted-foreground">+19% rispetto al mese scorso</p>
+                <div className="text-2xl font-bold">{realTimeData.totalShared.toFixed(0)} kWh</div>
+                <p className="text-xs text-muted-foreground">
+                  {realTimeData.deviceCount > 0 && (
+                    <span>Totale dispositivi: {realTimeData.deviceCount}</span>
+                  )}
+                  {realTimeData.deviceCount === 0 && (
+                    <span>+19% rispetto al mese scorso</span>
+                  )}
+                </p>
               </CardContent>
             </Card>
           </div>

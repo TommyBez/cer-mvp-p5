@@ -1,16 +1,8 @@
 "use client"
 
 import type React from "react"
-
 import Link from "next/link"
 import {
-  Bell,
-  Calculator,
-  FileText,
-  Home,
-  LineChart,
-  Package2,
-  Users,
   Upload,
   Search,
   Filter,
@@ -18,6 +10,10 @@ import {
   Eye,
   Trash2,
   Plus,
+  FileText,
+  FileSpreadsheet,
+  FileImage,
+  File,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -25,14 +21,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -44,517 +32,304 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import Image from "next/image"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useState } from "react"
 
 // Dati simulati per i documenti
 const documentsData = [
   {
     id: 1,
-    name: "Statuto CER Milano Nord",
-    category: "Statuti e Regolamenti",
-    type: "PDF",
+    name: "Contratto CER - Mario Rossi",
+    type: "Contratto",
+    category: "Adesione",
+    uploadDate: "2024-03-01",
     size: "2.4 MB",
-    uploadDate: "2024-01-15",
-    uploadedBy: "Admin CER",
     status: "Approvato",
-    description: "Statuto ufficiale della Comunità Energetica Rinnovabile Milano Nord",
+    member: "Mario Rossi",
   },
   {
     id: 2,
-    name: "Contratto Adesione Tipo",
-    category: "Contratti",
-    type: "DOCX",
+    name: "Bolletta Gennaio 2024",
+    type: "Bolletta",
+    category: "Fatturazione",
+    uploadDate: "2024-02-15",
     size: "156 KB",
-    uploadDate: "2024-01-10",
-    uploadedBy: "Ufficio Legale",
-    status: "Attivo",
-    description: "Modello di contratto per l'adesione di nuovi membri",
+    status: "Archiviato",
+    member: "Laura Bianchi",
   },
   {
     id: 3,
-    name: "Autorizzazione GSE 2024",
-    category: "Autorizzazioni",
-    type: "PDF",
-    size: "890 KB",
-    uploadDate: "2024-01-08",
-    uploadedBy: "Admin CER",
-    status: "Valido",
-    description: "Autorizzazione rilasciata dal GSE per l'anno 2024",
+    name: "Dichiarazione Impianto FV",
+    type: "Tecnico",
+    category: "Impianti",
+    uploadDate: "2024-02-10",
+    size: "5.2 MB",
+    status: "In revisione",
+    member: "Giuseppe Verdi",
   },
   {
     id: 4,
-    name: "Report Energetico Q4 2023",
-    category: "Report",
-    type: "XLSX",
-    size: "1.2 MB",
-    uploadDate: "2024-01-05",
-    uploadedBy: "Responsabile Tecnico",
-    status: "Archiviato",
-    description: "Report trimestrale della produzione e consumo energetico",
+    name: "Report Produzione Q1 2024",
+    type: "Report",
+    category: "Produzione",
+    uploadDate: "2024-04-05",
+    size: "3.8 MB",
+    status: "Approvato",
+    member: "Sistema",
   },
   {
     id: 5,
-    name: "Delibera Costituzione CER",
-    category: "Delibere",
-    type: "PDF",
-    size: "3.1 MB",
-    uploadDate: "2023-12-20",
-    uploadedBy: "Segretario",
+    name: "Documento Identità - Anna Neri",
+    type: "Identità",
+    category: "Anagrafica",
+    uploadDate: "2024-01-10",
+    size: "892 KB",
     status: "Approvato",
-    description: "Delibera di costituzione della Comunità Energetica",
+    member: "Anna Neri",
   },
 ]
 
-const categories = [
-  "Tutti",
-  "Statuti e Regolamenti",
-  "Contratti",
-  "Autorizzazioni",
-  "Report",
-  "Delibere",
-  "Comunicazioni GSE",
-]
-
 export function DocumentsManagement() {
-  const [user, setUser] = useState<any>(null)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Tutti")
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false)
-  const [uploadForm, setUploadForm] = useState({
-    name: "",
-    category: "",
-    description: "",
-    file: null as File | null,
-  })
-  const router = useRouter()
 
-  useEffect(() => {
-    const userData = localStorage.getItem("user")
-    if (userData) {
-      const parsedUser = JSON.parse(userData)
-      if (parsedUser.role !== "admin") {
-        router.push("/login")
-        return
-      }
-      setUser(parsedUser)
-    } else {
-      router.push("/login")
-    }
-  }, [router])
-
-  const handleLogout = () => {
-    localStorage.removeItem("user")
-    router.push("/login")
-  }
-
+  // Filtra i documenti in base ai criteri di ricerca
   const filteredDocuments = documentsData.filter((doc) => {
-    const matchesSearch =
-      doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === "Tutti" || doc.category === selectedCategory
     return matchesSearch && matchesCategory
   })
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      setUploadForm((prev) => ({ ...prev, file }))
-    }
-  }
-
-  const handleUploadSubmit = () => {
-    // Qui implementeresti la logica di upload
-    console.log("Upload documento:", uploadForm)
-    setIsUploadDialogOpen(false)
-    setUploadForm({ name: "", category: "", description: "", file: null })
-  }
-
-  const getStatusBadge = (status: string) => {
+  const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case "Approvato":
-        return (
-          <Badge variant="default" className="bg-green-100 text-green-800">
-            Approvato
-          </Badge>
-        )
-      case "Attivo":
-        return (
-          <Badge variant="default" className="bg-blue-100 text-blue-800">
-            Attivo
-          </Badge>
-        )
-      case "Valido":
-        return (
-          <Badge variant="default" className="bg-emerald-100 text-emerald-800">
-            Valido
-          </Badge>
-        )
+        return "success"
+      case "In revisione":
+        return "warning"
       case "Archiviato":
-        return <Badge variant="secondary">Archiviato</Badge>
+        return "secondary"
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return "default"
     }
   }
 
-  if (!user) {
-    return <div>Caricamento...</div>
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case "Contratto":
+      case "Tecnico":
+        return <FileText className="h-4 w-4" />
+      case "Report":
+        return <FileSpreadsheet className="h-4 w-4" />
+      case "Identità":
+        return <FileImage className="h-4 w-4" />
+      default:
+        return <File className="h-4 w-4" />
+    }
   }
 
   return (
-    <div
-      className={`grid min-h-screen w-full transition-all duration-300 ${sidebarCollapsed ? "md:grid-cols-[64px_1fr]" : "md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]"}`}
-    >
-      <div
-        className={`hidden border-r bg-background md:block transition-all duration-300 ${sidebarCollapsed ? "w-16" : "w-[220px] lg:w-[280px]"}`}
-      >
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 justify-between">
-            <Link
-              href="/"
-              className={`flex items-center gap-2 font-semibold ${sidebarCollapsed ? "justify-center w-full" : ""}`}
-            >
-              <Package2 className="h-6 w-6 text-green-600" />
-              {!sidebarCollapsed && <span>CER Manager</span>}
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="h-6 w-6"
-            >
-              {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+    <>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold md:text-2xl">Gestione Documenti</h1>
+        <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Upload className="mr-2 h-4 w-4" />
+              Carica Documento
             </Button>
-          </div>
-          <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="/dashboard"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Dashboard" : ""}
-              >
-                <Home className="h-4 w-4" />
-                {!sidebarCollapsed && "Dashboard"}
-              </Link>
-              <Link
-                href="/"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Membri" : ""}
-              >
-                <Users className="h-4 w-4" />
-                {!sidebarCollapsed && "Membri"}
-              </Link>
-              <Link
-                href="/documents"
-                className={`flex items-center gap-3 rounded-lg bg-accent px-3 py-2 text-accent-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Documenti" : ""}
-              >
-                <FileText className="h-4 w-4" />
-                {!sidebarCollapsed && "Documenti"}
-              </Link>
-              <Link
-                href="/simulation"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Simulazione" : ""}
-              >
-                <Calculator className="h-4 w-4" />
-                {!sidebarCollapsed && "Simulazione"}
-              </Link>
-              <Link
-                href="#"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
-                title={sidebarCollapsed ? "Report GSE" : ""}
-              >
-                <LineChart className="h-4 w-4" />
-                {!sidebarCollapsed && "Report GSE"}
-              </Link>
-            </nav>
-          </div>
-          {!sidebarCollapsed && (
-            <div className="mt-auto p-4">
-              <Card>
-                <CardHeader className="p-2 pt-0 md:p-4">
-                  <CardTitle>Supporto</CardTitle>
-                  <CardDescription>Hai bisogno di aiuto? Contatta il nostro team di supporto.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                  <Button size="sm" className="w-full">
-                    Contattaci
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
-          <div className="w-full flex-1">
-            <h1 className="text-lg font-semibold md:text-2xl">Gestione Documenti</h1>
-          </div>
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8 bg-transparent">
-            <Bell className="h-4 w-4" />
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <Image
-                  src="/placeholder.svg?height=32&width=32"
-                  width={32}
-                  height={32}
-                  alt="Avatar"
-                  className="rounded-full"
-                />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Benvenuto, {user?.name}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Impostazioni</DropdownMenuItem>
-              <DropdownMenuItem>Supporto</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          {/* Statistiche documenti */}
-          <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Totale Documenti</CardTitle>
-                <FileText className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{documentsData.length}</div>
-                <p className="text-xs text-muted-foreground">+2 questo mese</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Documenti Attivi</CardTitle>
-                <Badge className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {
-                    documentsData.filter(
-                      (doc) => doc.status === "Attivo" || doc.status === "Approvato" || doc.status === "Valido",
-                    ).length
-                  }
-                </div>
-                <p className="text-xs text-muted-foreground">In uso corrente</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Spazio Utilizzato</CardTitle>
-                <Upload className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">7.8 MB</div>
-                <p className="text-xs text-muted-foreground">di 1 GB disponibile</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Categorie</CardTitle>
-                <Filter className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{categories.length - 1}</div>
-                <p className="text-xs text-muted-foreground">Tipologie documenti</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Filtri e ricerca */}
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-                <div>
-                  <CardTitle>Repository Documenti</CardTitle>
-                  <CardDescription>Gestisci tutti i documenti della Comunità Energetica Rinnovabile</CardDescription>
-                </div>
-                <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Carica Documento
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Carica Nuovo Documento</DialogTitle>
-                      <DialogDescription>Aggiungi un nuovo documento al repository della CER</DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
-                          Nome
-                        </Label>
-                        <Input
-                          id="name"
-                          value={uploadForm.name}
-                          onChange={(e) => setUploadForm((prev) => ({ ...prev, name: e.target.value }))}
-                          className="col-span-3"
-                          placeholder="Nome del documento"
-                        />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="category" className="text-right">
-                          Categoria
-                        </Label>
-                        <Select
-                          value={uploadForm.category}
-                          onValueChange={(value) => setUploadForm((prev) => ({ ...prev, category: value }))}
-                        >
-                          <SelectTrigger className="col-span-3">
-                            <SelectValue placeholder="Seleziona categoria" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.slice(1).map((category) => (
-                              <SelectItem key={category} value={category}>
-                                {category}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="file" className="text-right">
-                          File
-                        </Label>
-                        <Input
-                          id="file"
-                          type="file"
-                          onChange={handleFileUpload}
-                          className="col-span-3"
-                          accept=".pdf,.doc,.docx,.xls,.xlsx"
-                        />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="description" className="text-right">
-                          Descrizione
-                        </Label>
-                        <Textarea
-                          id="description"
-                          value={uploadForm.description}
-                          onChange={(e) => setUploadForm((prev) => ({ ...prev, description: e.target.value }))}
-                          className="col-span-3"
-                          placeholder="Descrizione del documento"
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button type="submit" onClick={handleUploadSubmit}>
-                        Carica Documento
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Carica Nuovo Documento</DialogTitle>
+              <DialogDescription>
+                Seleziona e carica un nuovo documento nel sistema.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="file" className="text-right">
+                  File
+                </Label>
+                <Input id="file" type="file" className="col-span-3" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Cerca documenti..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-8"
-                    />
-                  </div>
-                </div>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Filtra per categoria" />
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="category" className="text-right">
+                  Categoria
+                </Label>
+                <Select>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Seleziona categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="Adesione">Adesione</SelectItem>
+                    <SelectItem value="Fatturazione">Fatturazione</SelectItem>
+                    <SelectItem value="Impianti">Impianti</SelectItem>
+                    <SelectItem value="Produzione">Produzione</SelectItem>
+                    <SelectItem value="Anagrafica">Anagrafica</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Tabella documenti */}
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome Documento</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Dimensione</TableHead>
-                    <TableHead>Data Upload</TableHead>
-                    <TableHead>Stato</TableHead>
-                    <TableHead className="text-right">Azioni</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredDocuments.map((document) => (
-                    <TableRow key={document.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{document.name}</div>
-                          <div className="text-sm text-muted-foreground">{document.description}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{document.category}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{document.type}</Badge>
-                      </TableCell>
-                      <TableCell>{document.size}</TableCell>
-                      <TableCell>{new Date(document.uploadDate).toLocaleDateString("it-IT")}</TableCell>
-                      <TableCell>{getStatusBadge(document.status)}</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Apri menu</span>
-                              <FileText className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="mr-2 h-4 w-4" />
-                              Visualizza
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Download className="mr-2 h-4 w-4" />
-                              Scarica
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Elimina
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </main>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="member" className="text-right">
+                  Membro
+                </Label>
+                <Select>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Seleziona membro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mario-rossi">Mario Rossi</SelectItem>
+                    <SelectItem value="laura-bianchi">Laura Bianchi</SelectItem>
+                    <SelectItem value="giuseppe-verdi">Giuseppe Verdi</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="notes" className="text-right">
+                  Note
+                </Label>
+                <Textarea id="notes" className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit">Carica</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-    </div>
+
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Documenti Totali</CardTitle>
+            <File className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{documentsData.length}</div>
+            <p className="text-xs text-muted-foreground">+12% dal mese scorso</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">In Revisione</CardTitle>
+            <Eye className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {documentsData.filter((doc) => doc.status === "In revisione").length}
+            </div>
+            <p className="text-xs text-muted-foreground">Richiedono attenzione</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Approvati</CardTitle>
+            <Badge className="h-4 w-4 bg-green-100" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {documentsData.filter((doc) => doc.status === "Approvato").length}
+            </div>
+            <p className="text-xs text-muted-foreground">Documenti validati</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Spazio Utilizzato</CardTitle>
+            <div className="h-4 w-4 bg-blue-100 rounded" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">15.3 GB</div>
+            <p className="text-xs text-muted-foreground">di 50 GB disponibili</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Archivio Documenti</CardTitle>
+          <CardDescription>Gestisci tutti i documenti della comunità energetica</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-4 flex flex-col gap-4 md:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Cerca documenti..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Filtra per categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Tutti">Tutte le categorie</SelectItem>
+                <SelectItem value="Adesione">Adesione</SelectItem>
+                <SelectItem value="Fatturazione">Fatturazione</SelectItem>
+                <SelectItem value="Impianti">Impianti</SelectItem>
+                <SelectItem value="Produzione">Produzione</SelectItem>
+                <SelectItem value="Anagrafica">Anagrafica</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" size="icon">
+              <Filter className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome Documento</TableHead>
+                  <TableHead>Categoria</TableHead>
+                  <TableHead>Membro</TableHead>
+                  <TableHead>Data Caricamento</TableHead>
+                  <TableHead>Dimensione</TableHead>
+                  <TableHead>Stato</TableHead>
+                  <TableHead className="text-right">Azioni</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredDocuments.map((doc) => (
+                  <TableRow key={doc.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getFileIcon(doc.type)}
+                        <span className="font-medium">{doc.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{doc.category}</TableCell>
+                    <TableCell>{doc.member}</TableCell>
+                    <TableCell>{new Date(doc.uploadDate).toLocaleDateString("it-IT")}</TableCell>
+                    <TableCell>{doc.size}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusBadgeVariant(doc.status) as any}>
+                        {doc.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   )
 }
