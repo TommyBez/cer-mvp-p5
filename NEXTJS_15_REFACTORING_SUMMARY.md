@@ -1,7 +1,7 @@
 # Next.js 15 Refactoring Summary
 
 ## Overview
-Successfully refactored the component tree to follow Next.js 15 best practices by pushing client components as deep as possible and implementing proper server-side rendering with Suspense boundaries.
+Successfully refactored the component tree to follow Next.js 15 best practices by pushing client components as deep as possible and implementing proper server-side rendering with Next.js built-in streaming via `loading.tsx` files.
 
 ## Key Changes Implemented
 
@@ -35,16 +35,44 @@ Created `lib/data.ts` with simulated async data fetching:
 - `fetchSimulationData()` - Simulation scenarios with 900ms delay
 - `fetchGSEReports()` - GSE report data with 700ms delay
 
-### 4. Suspense Boundaries Implementation
-Each page now implements proper Suspense boundaries:
+### 4. Next.js Built-in Streaming with loading.tsx
+Using Next.js convention for automatic Suspense boundaries:
+
+```
+app/(dashboard)/
+├── page.tsx (async server component)
+├── loading.tsx (loading UI)
+├── members/
+│   ├── page.tsx (async server component)  
+│   └── loading.tsx (loading UI)
+├── documents/
+│   ├── page.tsx (async server component)
+│   └── loading.tsx (loading UI)
+├── simulation/
+│   ├── page.tsx (async server component)
+│   └── loading.tsx (loading UI)
+└── gse-reports/
+    ├── page.tsx (async server component)
+    └── loading.tsx (loading UI)
+```
+
+Each `loading.tsx` file automatically wraps its sibling `page.tsx` with Suspense:
 
 ```tsx
-export default function MembersPage() {
-  return (
-    <Suspense fallback={<MembersSkeleton />}>
-      <MembersContent />
-    </Suspense>
-  )
+// app/(dashboard)/members/loading.tsx
+import { MembersSkeleton } from "@/components/ui/loading-skeletons"
+
+export default function MembersLoading() {
+  return <MembersSkeleton />
+}
+
+// app/(dashboard)/members/page.tsx  
+import { fetchMembers } from "@/lib/data"
+import { MembersManagementServer } from "@/components/server/members-management-server"
+
+export default async function MembersPage() {
+  const members = await fetchMembers()
+  return <MembersManagementServer members={members} />
 }
 ```
 
@@ -101,10 +129,11 @@ components/
 - State management (authentication, filters)
 - Event handlers (clicks, changes)
 
-### ✅ Streaming with Suspense
-- Implemented on all data-dependent pages
-- Proper loading states with skeletons
-- Progressive enhancement
+### ✅ Framework-Native Streaming with loading.tsx
+- **Cleaner than manual Suspense**: No need to wrap components manually
+- **Automatic route-level Suspense**: Next.js handles boundaries automatically
+- **Better DX**: Standard file-based convention
+- **Proper loading states**: Skeleton components shown during async operations
 
 ### ✅ Data Fetching in Server Components
 - Async/await pattern in server components
@@ -123,12 +152,53 @@ components/
 3. **Better SEO**: Content available during initial HTML load
 4. **Improved UX**: Skeleton loading states prevent layout shifts
 5. **Optimal Hydration**: Only interactive components need hydration
+6. **Framework Optimizations**: Next.js handles Suspense boundaries automatically
 
 ## Build Results
 ✅ Build completed successfully with no errors
 - 12 pages total (5 dashboard pages, login, member-area, API routes)
 - All pages compile to optimized bundles
 - Server components properly detected and optimized
+- Automatic streaming boundaries via loading.tsx files
+
+## Key Improvements Over Manual Suspense
+
+### Before (Manual Suspense):
+```tsx
+export default function MembersPage() {
+  return (
+    <Suspense fallback={<MembersSkeleton />}>
+      <MembersContent />
+    </Suspense>
+  )
+}
+
+async function MembersContent() {
+  const members = await fetchMembers()
+  return <MembersManagementServer members={members} />
+}
+```
+
+### After (Next.js loading.tsx):
+```tsx
+// page.tsx
+export default async function MembersPage() {
+  const members = await fetchMembers()
+  return <MembersManagementServer members={members} />
+}
+
+// loading.tsx  
+export default function MembersLoading() {
+  return <MembersSkeleton />
+}
+```
+
+**Benefits of loading.tsx approach:**
+- ✅ **Cleaner code**: Less boilerplate, more declarative
+- ✅ **Framework convention**: Standard Next.js pattern
+- ✅ **Automatic handling**: No manual Suspense management
+- ✅ **Better performance**: Framework optimizations
+- ✅ **Route-level boundaries**: Proper isolation per route
 
 ## Implementation Notes
 
@@ -137,5 +207,6 @@ components/
 - Search/filter logic moved to client components
 - Static content and layouts moved to server components
 - Proper TypeScript typing maintained throughout
+- loading.tsx files provide cleaner, more maintainable streaming implementation
 
-This refactoring follows Next.js 15 best practices and provides a solid foundation for scalable, performant React applications.
+This refactoring follows Next.js 15 best practices using the framework's built-in streaming capabilities and provides a solid foundation for scalable, performant React applications.
