@@ -2,14 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import {
-  Calculator,
-  FileText,
-  Home,
-  LineChart,
   Package2,
-  Users,
 } from "lucide-react"
 
 import {
@@ -27,52 +21,22 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-
-// Menu items with their routes and icons
-const menuItems = [
-  {
-    title: "Dashboard",
-    icon: Home,
-    href: "/dashboard",
-  },
-  {
-    title: "Membri",
-    icon: Users,
-    href: "/members",
-  },
-  {
-    title: "Documenti",
-    icon: FileText,
-    href: "/documents",
-  },
-  {
-    title: "Simulazione",
-    icon: Calculator,
-    href: "/simulation",
-  },
-  {
-    title: "Report GSE",
-    icon: LineChart,
-    href: "/gse-reports",
-  },
-]
+import { SidebarNavigationClient } from "@/components/sidebar-navigation-client"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const pathname = usePathname()
-
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar variant="inset" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-green-600 text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <Package2 className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">CER Manager</span>
-                  <span className="truncate text-xs">Energy Community</span>
+                  <span className="truncate text-xs">Comunità Energetiche</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -83,18 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild isActive={pathname === item.href}>
-                    <Link href={item.href}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <SidebarNavigationClient />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

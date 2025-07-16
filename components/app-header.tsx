@@ -15,8 +15,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { PageTitle } from "@/components/page-title"
 
-export function AppHeader({ title }: { title?: string }) {
+export function AppHeader() {
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
 
@@ -41,7 +42,7 @@ export function AppHeader({ title }: { title?: string }) {
       <SidebarTrigger className="-ml-1" />
       
       <div className="w-full flex-1">
-        {title && <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>}
+        <PageTitle />
       </div>
       
       <Button variant="outline" size="icon" className="ml-auto h-8 w-8 bg-transparent">
