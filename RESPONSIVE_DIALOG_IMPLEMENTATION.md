@@ -63,10 +63,6 @@ The following components have been updated to use responsive dialogs:
 - `components/members-management.tsx`
 - `components/ui/command.tsx` (CommandDialog)
 
-## Demo
-
-A demo page has been created at `/demo/responsive-dialog` to showcase the responsive behavior.
-
 ## Technical Details
 
 ### Mobile Detection
