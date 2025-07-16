@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/components/ui/use-mobile"
 import { Card, CardContent } from "@/components/ui/card"
 
 interface ResponsiveTableProps {
@@ -26,11 +25,10 @@ export function ResponsiveTable({
   className,
   mobileCardClassName,
 }: ResponsiveTableProps) {
-  const isMobile = useIsMobile()
-
-  if (isMobile) {
-    return (
-      <div className="space-y-4">
+  return (
+    <>
+      {/* Mobile View - Cards */}
+      <div className="block md:hidden space-y-4">
         {data.map((row, rowIndex) => (
           <Card key={rowIndex} className={cn("p-4", mobileCardClassName)}>
             <CardContent className="p-0 space-y-2">
@@ -42,11 +40,11 @@ export function ResponsiveTable({
                   : row[column.key]
                 
                 return (
-                  <div key={column.key} className="flex justify-between items-center">
+                  <div key={column.key} className="flex justify-between items-center gap-2">
                     <span className="text-sm font-medium text-muted-foreground">
                       {column.mobileLabel || column.header}:
                     </span>
-                    <span className="text-sm">{value}</span>
+                    <span className="text-sm text-right">{value}</span>
                   </div>
                 )
               })}
@@ -54,45 +52,44 @@ export function ResponsiveTable({
           </Card>
         ))}
       </div>
-    )
-  }
 
-  return (
-    <div className="relative w-full overflow-auto">
-      <table className={cn("w-full caption-bottom text-sm", className)}>
-        <thead>
-          <tr className="border-b">
-            {columns.map((column) => (
-              <th
-                key={column.key}
-                className={cn(
-                  "h-12 px-4 text-left align-middle font-medium text-muted-foreground",
-                  column.className
-                )}
-              >
-                {column.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, rowIndex) => (
-            <tr
-              key={rowIndex}
-              className="border-b transition-colors hover:bg-muted/50"
-            >
+      {/* Desktop View - Table */}
+      <div className="hidden md:block relative w-full overflow-auto">
+        <table className={cn("w-full caption-bottom text-sm", className)}>
+          <thead>
+            <tr className="border-b">
               {columns.map((column) => (
-                <td
+                <th
                   key={column.key}
-                  className={cn("p-4 align-middle", column.className)}
+                  className={cn(
+                    "h-12 px-4 text-left align-middle font-medium text-muted-foreground",
+                    column.className
+                  )}
                 >
-                  {renderCell ? renderCell(row, column) : row[column.key]}
-                </td>
+                  {column.header}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {data.map((row, rowIndex) => (
+              <tr
+                key={rowIndex}
+                className="border-b transition-colors hover:bg-muted/50"
+              >
+                {columns.map((column) => (
+                  <td
+                    key={column.key}
+                    className={cn("p-4 align-middle", column.className)}
+                  >
+                    {renderCell ? renderCell(row, column) : row[column.key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }
