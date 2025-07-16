@@ -36,7 +36,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTableAdvanced } from "@/components/responsive-table-advanced"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -496,30 +496,55 @@ export function GSEReportsManagement() {
                       <CardDescription>Ripartizione degli incentivi per membro della comunità</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Membro</TableHead>
-                            <TableHead>Energia Consumata</TableHead>
-                            <TableHead>Energia Condivisa</TableHead>
-                            <TableHead>Incentivo</TableHead>
-                            <TableHead>% sul Totale</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {calculationResults.energyData.map((member) => (
-                            <TableRow key={member.memberId}>
-                              <TableCell className="font-medium">{member.name}</TableCell>
-                              <TableCell>{member.consumed} kWh</TableCell>
-                              <TableCell>{member.shared} kWh</TableCell>
-                              <TableCell>€{member.incentive.toFixed(2)}</TableCell>
-                              <TableCell>
-                                {((member.incentive / calculationResults.totalIncentive) * 100).toFixed(1)}%
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                      <ResponsiveTableAdvanced
+                        data={calculationResults.energyData}
+                        columns={[
+                          {
+                            key: 'name',
+                            header: 'Membro',
+                            accessor: (member) => <span className="font-medium">{member.name}</span>,
+                            sortable: true,
+                            priority: 10
+                          },
+                          {
+                            key: 'consumed',
+                            header: 'Energia Consumata',
+                            accessor: (member) => `${member.consumed} kWh`,
+                            sortable: true,
+                            className: 'text-right font-mono',
+                            priority: 7
+                          },
+                          {
+                            key: 'shared',
+                            header: 'Energia Condivisa',
+                            accessor: (member) => `${member.shared} kWh`,
+                            sortable: true,
+                            className: 'text-right font-mono',
+                            priority: 8
+                          },
+                          {
+                            key: 'incentive',
+                            header: 'Incentivo',
+                            accessor: (member) => `€${member.incentive.toFixed(2)}`,
+                            sortable: true,
+                            className: 'text-right font-mono',
+                            priority: 9
+                          },
+                          {
+                            key: 'percentage',
+                            header: '% sul Totale',
+                            accessor: (member) => `${((member.incentive / calculationResults.totalIncentive) * 100).toFixed(1)}%`,
+                            sortable: true,
+                            className: 'text-right font-mono',
+                            priority: 5
+                          }
+                        ]}
+                        getRowKey={(member) => member.memberId}
+                        enablePagination={false}
+                        enableFiltering={false}
+                        enableSorting={true}
+                        mobileLayout="scroll"
+                      />
 
                       <div className="mt-4 p-4 bg-green-50 rounded-lg">
                         <div className="flex justify-between items-center">
@@ -606,67 +631,104 @@ export function GSEReportsManagement() {
 
               <Card>
                 <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Periodo</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Stato</TableHead>
-                        <TableHead>Energia Condivisa</TableHead>
-                        <TableHead>Incentivi</TableHead>
-                        <TableHead>Data Invio</TableHead>
-                        <TableHead className="text-right">Azioni</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {gseReportsData.map((report) => (
-                        <TableRow key={report.id}>
-                          <TableCell className="font-medium">
+                  <ResponsiveTableAdvanced
+                    data={gseReportsData}
+                    columns={[
+                      {
+                        key: 'period',
+                        header: 'Periodo',
+                        accessor: (report) => (
+                          <span className="font-medium">
                             {new Date(report.period + "-01").toLocaleDateString("it-IT", {
                               month: "long",
                               year: "numeric",
                             })}
-                          </TableCell>
-                          <TableCell>{report.type}</TableCell>
-                          <TableCell>{getStatusBadge(report.status)}</TableCell>
-                          <TableCell>{report.energyShared.toLocaleString()} kWh</TableCell>
-                          <TableCell>€{report.incentiveAmount.toLocaleString()}</TableCell>
-                          <TableCell>
-                            {report.submissionDate ? new Date(report.submissionDate).toLocaleDateString("it-IT") : "-"}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <span className="sr-only">Apri menu</span>
-                                  <Settings className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  Visualizza
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Scarica
-                                </DropdownMenuItem>
-                                {report.status === "Bozza" && (
-                                  <>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
-                                      <Send className="mr-2 h-4 w-4" />
-                                      Invia a GSE
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                          </span>
+                        ),
+                        sortable: true,
+                        priority: 10
+                      },
+                      {
+                        key: 'type',
+                        header: 'Tipo',
+                        accessor: (report) => report.type,
+                        sortable: true,
+                        priority: 7
+                      },
+                      {
+                        key: 'status',
+                        header: 'Stato',
+                        accessor: (report) => getStatusBadge(report.status),
+                        sortable: true,
+                        priority: 8
+                      },
+                      {
+                        key: 'energyShared',
+                        header: 'Energia Condivisa',
+                        accessor: (report) => `${report.energyShared.toLocaleString()} kWh`,
+                        sortable: true,
+                        className: 'text-right font-mono',
+                        priority: 6
+                      },
+                      {
+                        key: 'incentiveAmount',
+                        header: 'Incentivi',
+                        accessor: (report) => `€${report.incentiveAmount.toLocaleString()}`,
+                        sortable: true,
+                        className: 'text-right font-mono',
+                        priority: 9
+                      },
+                      {
+                        key: 'submissionDate',
+                        header: 'Data Invio',
+                        accessor: (report) => report.submissionDate ? new Date(report.submissionDate).toLocaleDateString("it-IT") : "-",
+                        sortable: true,
+                        priority: 5
+                      },
+                      {
+                        key: 'actions',
+                        header: 'Azioni',
+                        accessor: (report) => (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Apri menu</span>
+                                <Settings className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>
+                                <Eye className="mr-2 h-4 w-4" />
+                                Visualizza
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Download className="mr-2 h-4 w-4" />
+                                Scarica
+                              </DropdownMenuItem>
+                              {report.status === "Bozza" && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem>
+                                    <Send className="mr-2 h-4 w-4" />
+                                    Invia a GSE
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        ),
+                        className: 'text-right',
+                        priority: 1
+                      }
+                    ]}
+                    getRowKey={(report) => report.id}
+                    enableFiltering={false}
+                    enableSorting={true}
+                    enablePagination={true}
+                    itemsPerPage={10}
+                    emptyMessage="Nessun report trovato"
+                    mobileLayout="card"
+                  />
                 </CardContent>
               </Card>
             </TabsContent>

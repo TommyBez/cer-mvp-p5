@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTableAdvanced } from "@/components/responsive-table-advanced"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
@@ -403,101 +403,137 @@ export function DeviceManagement() {
 
           {/* Devices Table */}
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Dispositivo</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Membro</TableHead>
-                  <TableHead>Stato</TableHead>
-                  <TableHead>Ultima Lettura</TableHead>
-                  <TableHead>Ubicazione</TableHead>
-                  <TableHead className="text-right">Azioni</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDevices.map((device) => {
-                  const DeviceIcon = deviceTypes[device.type].icon
-                  return (
-                    <TableRow key={device.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <DeviceIcon className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <div className="font-medium">{device.name}</div>
-                            <div className="text-sm text-muted-foreground">{device.serialNumber}</div>
-                          </div>
+            <ResponsiveTableAdvanced
+              data={filteredDevices}
+              columns={[
+                {
+                  key: 'device',
+                  header: 'Dispositivo',
+                  accessor: (device) => {
+                    const DeviceIcon = deviceTypes[device.type].icon
+                    return (
+                      <div className="flex items-center gap-2">
+                        <DeviceIcon className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <div className="font-medium">{device.name}</div>
+                          <div className="text-sm text-muted-foreground">{device.serialNumber}</div>
                         </div>
-                      </TableCell>
-                      <TableCell>{deviceTypes[device.type].label}</TableCell>
-                      <TableCell>{device.memberName}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            device.status === "online"
-                              ? "default"
-                              : device.status === "offline"
-                              ? "secondary"
-                              : "destructive"
-                          }
+                      </div>
+                    )
+                  },
+                  sortable: true,
+                  filterable: true,
+                  priority: 10
+                },
+                {
+                  key: 'type',
+                  header: 'Tipo',
+                  accessor: (device) => deviceTypes[device.type].label,
+                  sortable: true,
+                  priority: 6
+                },
+                {
+                  key: 'memberName',
+                  header: 'Membro',
+                  accessor: (device) => device.memberName,
+                  sortable: true,
+                  filterable: true,
+                  priority: 8
+                },
+                {
+                  key: 'status',
+                  header: 'Stato',
+                  accessor: (device) => (
+                    <Badge
+                      variant={
+                        device.status === "online"
+                          ? "default"
+                          : device.status === "offline"
+                          ? "secondary"
+                          : "destructive"
+                      }
+                    >
+                      {device.status === "online" && <Wifi className="mr-1 h-3 w-3" />}
+                      {device.status === "offline" && <WifiOff className="mr-1 h-3 w-3" />}
+                      {device.status === "error" && <AlertCircle className="mr-1 h-3 w-3" />}
+                      {device.status}
+                    </Badge>
+                  ),
+                  sortable: true,
+                  priority: 7
+                },
+                {
+                  key: 'lastReading',
+                  header: 'Ultima Lettura',
+                  accessor: (device) => device.lastReading ? (
+                    <div className="text-sm">
+                      <div>P: {device.lastReading.instantPower.toFixed(1)} kW</div>
+                      <div className="text-muted-foreground">
+                        {new Date(device.lastReading.timestamp).toLocaleTimeString()}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">-</span>
+                  ),
+                  sortable: true,
+                  priority: 5
+                },
+                {
+                  key: 'location',
+                  header: 'Ubicazione',
+                  accessor: (device) => device.location,
+                  sortable: true,
+                  filterable: true,
+                  priority: 4
+                },
+                {
+                  key: 'actions',
+                  header: 'Azioni',
+                  accessor: (device) => (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Azioni</DropdownMenuLabel>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedDevice(device)
+                            setShowRealTimeData(true)
+                          }}
                         >
-                          {device.status === "online" && <Wifi className="mr-1 h-3 w-3" />}
-                          {device.status === "offline" && <WifiOff className="mr-1 h-3 w-3" />}
-                          {device.status === "error" && <AlertCircle className="mr-1 h-3 w-3" />}
-                          {device.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {device.lastReading ? (
-                          <div className="text-sm">
-                            <div>P: {device.lastReading.instantPower.toFixed(1)} kW</div>
-                            <div className="text-muted-foreground">
-                              {new Date(device.lastReading.timestamp).toLocaleTimeString()}
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground">-</span>
-                        )}
-                      </TableCell>
-                      <TableCell>{device.location}</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Azioni</DropdownMenuLabel>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedDevice(device)
-                                setShowRealTimeData(true)
-                              }}
-                            >
-                              <Activity className="mr-2 h-4 w-4" />
-                              Visualizza Dati Real-time
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => setEditingDevice(device)}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Modifica
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-red-600"
-                              onClick={() => handleDeleteDevice(device.id)}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Elimina
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
+                          <Activity className="mr-2 h-4 w-4" />
+                          Visualizza Dati Real-time
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setEditingDevice(device)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Modifica
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => handleDeleteDevice(device.id)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Elimina
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ),
+                  className: 'text-right',
+                  priority: 1
+                }
+              ]}
+              getRowKey={(device) => device.id}
+              enableFiltering={false} // We already have custom filtering
+              enableSorting={true}
+              enablePagination={true}
+              itemsPerPage={10}
+              emptyMessage="Nessun dispositivo trovato"
+              mobileLayout="card"
+            />
           </div>
         </CardContent>
       </Card>

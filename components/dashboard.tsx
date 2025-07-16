@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/responsive-table"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -326,61 +326,41 @@ export function Dashboard() {
                 <CardDescription>Gli ultimi 5 membri che si sono uniti alla comunità.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead className="text-right">Stato</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Mario Rossi</div>
-                        <div className="text-sm text-muted-foreground">mario.rossi@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Giulia Bianchi</div>
-                        <div className="text-sm text-muted-foreground">giulia.bianchi@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Luca Verdi</div>
-                        <div className="text-sm text-muted-foreground">luca.verdi@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="secondary">In attesa</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Anna Neri</div>
-                        <div className="text-sm text-muted-foreground">anna.neri@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Paolo Gialli</div>
-                        <div className="text-sm text-muted-foreground">paolo.gialli@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                <ResponsiveTable
+                  data={[
+                    { id: 1, name: 'Mario Rossi', email: 'mario.rossi@email.com', status: 'Attivo' },
+                    { id: 2, name: 'Giulia Bianchi', email: 'giulia.bianchi@email.com', status: 'Attivo' },
+                    { id: 3, name: 'Luca Verdi', email: 'luca.verdi@email.com', status: 'In attesa' },
+                    { id: 4, name: 'Anna Neri', email: 'anna.neri@email.com', status: 'Attivo' },
+                    { id: 5, name: 'Paolo Gialli', email: 'paolo.gialli@email.com', status: 'Attivo' }
+                  ]}
+                  columns={[
+                    {
+                      key: 'name',
+                      header: 'Nome',
+                      accessor: (member) => (
+                        <div>
+                          <div className="font-medium">{member.name}</div>
+                          <div className="text-sm text-muted-foreground">{member.email}</div>
+                        </div>
+                      ),
+                      priority: 10
+                    },
+                    {
+                      key: 'status',
+                      header: 'Stato',
+                      accessor: (member) => (
+                        <Badge variant={member.status === 'In attesa' ? 'secondary' : 'outline'}>
+                          {member.status}
+                        </Badge>
+                      ),
+                      className: 'text-right',
+                      priority: 5
+                    }
+                  ]}
+                  getRowKey={(member) => member.id}
+                  mobileLayout="card"
+                />
               </CardContent>
             </Card>
           </div>

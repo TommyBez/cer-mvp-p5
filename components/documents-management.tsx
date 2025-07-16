@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTableAdvanced } from "@/components/responsive-table-advanced"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
@@ -280,53 +280,90 @@ export function DocumentsManagement() {
           </div>
 
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome Documento</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Membro</TableHead>
-                  <TableHead>Data Caricamento</TableHead>
-                  <TableHead>Dimensione</TableHead>
-                  <TableHead>Stato</TableHead>
-                  <TableHead className="text-right">Azioni</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDocuments.map((doc) => (
-                  <TableRow key={doc.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {getFileIcon(doc.type)}
-                        <span className="font-medium">{doc.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{doc.category}</TableCell>
-                    <TableCell>{doc.member}</TableCell>
-                    <TableCell>{new Date(doc.uploadDate).toLocaleDateString("it-IT")}</TableCell>
-                    <TableCell>{doc.size}</TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(doc.status) as any}>
-                        {doc.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <ResponsiveTableAdvanced
+              data={filteredDocuments}
+              columns={[
+                {
+                  key: 'name',
+                  header: 'Nome Documento',
+                  accessor: (doc) => (
+                    <div className="flex items-center gap-2">
+                      {getFileIcon(doc.type)}
+                      <span className="font-medium">{doc.name}</span>
+                    </div>
+                  ),
+                  sortable: true,
+                  filterable: true,
+                  priority: 10
+                },
+                {
+                  key: 'category',
+                  header: 'Categoria',
+                  accessor: (doc) => doc.category,
+                  sortable: true,
+                  priority: 7
+                },
+                {
+                  key: 'member',
+                  header: 'Membro',
+                  accessor: (doc) => doc.member,
+                  sortable: true,
+                  filterable: true,
+                  priority: 8
+                },
+                {
+                  key: 'uploadDate',
+                  header: 'Data Caricamento',
+                  accessor: (doc) => new Date(doc.uploadDate).toLocaleDateString("it-IT"),
+                  sortable: true,
+                  priority: 5
+                },
+                {
+                  key: 'size',
+                  header: 'Dimensione',
+                  accessor: (doc) => doc.size,
+                  sortable: true,
+                  priority: 4
+                },
+                {
+                  key: 'status',
+                  header: 'Stato',
+                  accessor: (doc) => (
+                    <Badge variant={getStatusBadgeVariant(doc.status) as any}>
+                      {doc.status}
+                    </Badge>
+                  ),
+                  sortable: true,
+                  priority: 6
+                },
+                {
+                  key: 'actions',
+                  header: 'Azioni',
+                  accessor: () => (
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="icon">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ),
+                  className: 'text-right',
+                  priority: 1
+                }
+              ]}
+              getRowKey={(doc) => doc.id}
+              enableFiltering={false} // We already have custom filtering
+              enableSorting={true}
+              enablePagination={true}
+              itemsPerPage={10}
+              emptyMessage="Nessun documento trovato"
+              mobileLayout="card"
+            />
           </div>
         </CardContent>
       </Card>
