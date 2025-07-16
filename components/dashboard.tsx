@@ -29,6 +29,16 @@ import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
+import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export function Dashboard() {
   const [user, setUser] = useState<any>(null)
@@ -326,61 +336,41 @@ export function Dashboard() {
                 <CardDescription>Gli ultimi 5 membri che si sono uniti alla comunità.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead className="text-right">Stato</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Mario Rossi</div>
-                        <div className="text-sm text-muted-foreground">mario.rossi@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Giulia Bianchi</div>
-                        <div className="text-sm text-muted-foreground">giulia.bianchi@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Luca Verdi</div>
-                        <div className="text-sm text-muted-foreground">luca.verdi@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="secondary">In attesa</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Anna Neri</div>
-                        <div className="text-sm text-muted-foreground">anna.neri@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        <div className="font-medium">Paolo Gialli</div>
-                        <div className="text-sm text-muted-foreground">paolo.gialli@email.com</div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Badge variant="outline">Attivo</Badge>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                <ResponsiveTable
+                  columns={[
+                    { key: "member", header: "Nome" },
+                    { key: "status", header: "Stato", className: "text-right" }
+                  ]}
+                  data={[
+                    { name: "Mario Rossi", email: "mario.rossi@email.com", status: "Attivo" },
+                    { name: "Giulia Bianchi", email: "giulia.bianchi@email.com", status: "Attivo" },
+                    { name: "Luca Verdi", email: "luca.verdi@email.com", status: "In attesa" },
+                    { name: "Anna Neri", email: "anna.neri@email.com", status: "Attivo" },
+                    { name: "Paolo Gialli", email: "paolo.gialli@email.com", status: "Attivo" }
+                  ]}
+                  renderCell={(member, column) => {
+                    switch (column.key) {
+                      case "member":
+                        return (
+                          <div>
+                            <div className="font-medium">{member.name}</div>
+                            <div className="text-sm text-muted-foreground">{member.email}</div>
+                          </div>
+                        )
+                      case "status":
+                        return (
+                          <div className="text-right">
+                            <Badge variant={member.status === "In attesa" ? "secondary" : "outline"}>
+                              {member.status}
+                            </Badge>
+                          </div>
+                        )
+                      default:
+                        return null
+                    }
+                  }}
+                  mobileCardClassName="shadow-sm"
+                />
               </CardContent>
             </Card>
           </div>

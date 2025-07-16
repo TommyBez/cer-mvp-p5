@@ -37,6 +37,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -496,30 +497,33 @@ export function GSEReportsManagement() {
                       <CardDescription>Ripartizione degli incentivi per membro della comunità</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Membro</TableHead>
-                            <TableHead>Energia Consumata</TableHead>
-                            <TableHead>Energia Condivisa</TableHead>
-                            <TableHead>Incentivo</TableHead>
-                            <TableHead>% sul Totale</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {calculationResults.energyData.map((member) => (
-                            <TableRow key={member.memberId}>
-                              <TableCell className="font-medium">{member.name}</TableCell>
-                              <TableCell>{member.consumed} kWh</TableCell>
-                              <TableCell>{member.shared} kWh</TableCell>
-                              <TableCell>€{member.incentive.toFixed(2)}</TableCell>
-                              <TableCell>
-                                {((member.incentive / calculationResults.totalIncentive) * 100).toFixed(1)}%
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                      <ResponsiveTable
+                        columns={[
+                          { key: "name", header: "Membro" },
+                          { key: "consumed", header: "Energia Consumata", mobileLabel: "Consumata" },
+                          { key: "shared", header: "Energia Condivisa", mobileLabel: "Condivisa" },
+                          { key: "incentive", header: "Incentivo" },
+                          { key: "percentage", header: "% sul Totale", hideOnMobile: true }
+                        ]}
+                        data={calculationResults.energyData}
+                        renderCell={(member, column) => {
+                          switch (column.key) {
+                            case "name":
+                              return <span className="font-medium">{member.name}</span>
+                            case "consumed":
+                              return `${member.consumed} kWh`
+                            case "shared":
+                              return `${member.shared} kWh`
+                            case "incentive":
+                              return `€${member.incentive.toFixed(2)}`
+                            case "percentage":
+                              return `${((member.incentive / calculationResults.totalIncentive) * 100).toFixed(1)}%`
+                            default:
+                              return null
+                          }
+                        }}
+                        mobileCardClassName="shadow-sm"
+                      />
 
                       <div className="mt-4 p-4 bg-green-50 rounded-lg">
                         <div className="flex justify-between items-center">
@@ -606,67 +610,77 @@ export function GSEReportsManagement() {
 
               <Card>
                 <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Periodo</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Stato</TableHead>
-                        <TableHead>Energia Condivisa</TableHead>
-                        <TableHead>Incentivi</TableHead>
-                        <TableHead>Data Invio</TableHead>
-                        <TableHead className="text-right">Azioni</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {gseReportsData.map((report) => (
-                        <TableRow key={report.id}>
-                          <TableCell className="font-medium">
-                            {new Date(report.period + "-01").toLocaleDateString("it-IT", {
-                              month: "long",
-                              year: "numeric",
-                            })}
-                          </TableCell>
-                          <TableCell>{report.type}</TableCell>
-                          <TableCell>{getStatusBadge(report.status)}</TableCell>
-                          <TableCell>{report.energyShared.toLocaleString()} kWh</TableCell>
-                          <TableCell>€{report.incentiveAmount.toLocaleString()}</TableCell>
-                          <TableCell>
-                            {report.submissionDate ? new Date(report.submissionDate).toLocaleDateString("it-IT") : "-"}
-                          </TableCell>
-                          <TableCell className="text-right">
+                  <ResponsiveTable
+                    columns={[
+                      { key: "period", header: "Periodo" },
+                      { key: "type", header: "Tipo", hideOnMobile: true },
+                      { key: "status", header: "Stato" },
+                      { key: "energyShared", header: "Energia Condivisa", mobileLabel: "Energia" },
+                      { key: "incentiveAmount", header: "Incentivi", mobileLabel: "Incentivi" },
+                      { key: "submissionDate", header: "Data Invio", hideOnMobile: true },
+                      { key: "actions", header: "Azioni", className: "text-right" }
+                    ]}
+                    data={gseReportsData}
+                    renderCell={(report, column) => {
+                      switch (column.key) {
+                        case "period":
+                          return (
+                            <span className="font-medium">
+                              {new Date(report.period + "-01").toLocaleDateString("it-IT", {
+                                month: "long",
+                                year: "numeric",
+                              })}
+                            </span>
+                          )
+                        case "type":
+                          return report.type
+                        case "status":
+                          return getStatusBadge(report.status)
+                        case "energyShared":
+                          return `${report.energyShared.toLocaleString()} kWh`
+                        case "incentiveAmount":
+                          return `€${report.incentiveAmount.toLocaleString()}`
+                        case "submissionDate":
+                          return report.submissionDate ? new Date(report.submissionDate).toLocaleDateString("it-IT") : "-"
+                        case "actions":
+                          return (
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <span className="sr-only">Apri menu</span>
-                                  <Settings className="h-4 w-4" />
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Eye className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem>
                                   <Eye className="mr-2 h-4 w-4" />
-                                  Visualizza
+                                  Visualizza Report
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
                                   <Download className="mr-2 h-4 w-4" />
-                                  Scarica
+                                  Scarica PDF
                                 </DropdownMenuItem>
-                                {report.status === "Bozza" && (
+                                <DropdownMenuItem>
+                                  <FileSpreadsheet className="mr-2 h-4 w-4" />
+                                  Scarica Excel
+                                </DropdownMenuItem>
+                                {report.status === "inviato" && (
                                   <>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem>
-                                      <Send className="mr-2 h-4 w-4" />
-                                      Invia a GSE
+                                      <RefreshCw className="mr-2 h-4 w-4" />
+                                      Aggiorna Stato
                                     </DropdownMenuItem>
                                   </>
                                 )}
                               </DropdownMenuContent>
                             </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                          )
+                        default:
+                          return null
+                      }
+                    }}
+                    mobileCardClassName="shadow-sm"
+                  />
                 </CardContent>
               </Card>
             </TabsContent>

@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -273,37 +275,36 @@ export function MemberDashboard() {
               <CardDescription>Documenti essenziali e report disponibili per il download</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome Documento</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Dimensione</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead className="text-right">Azioni</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {documentsData.map((document) => (
-                    <TableRow key={document.id}>
-                      <TableCell>
-                        <div className="font-medium">{document.name}</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{document.type}</Badge>
-                      </TableCell>
-                      <TableCell>{document.size}</TableCell>
-                      <TableCell>{new Date(document.date).toLocaleDateString("it-IT")}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
+              <ResponsiveTable
+                columns={[
+                  { key: "name", header: "Nome Documento" },
+                  { key: "type", header: "Tipo", hideOnMobile: true },
+                  { key: "size", header: "Dimensione", hideOnMobile: true },
+                  { key: "date", header: "Data", mobileLabel: "Data" },
+                  { key: "actions", header: "Azioni", className: "text-right" }
+                ]}
+                data={documentsData}
+                renderCell={(document, column) => {
+                  switch (column.key) {
+                    case "name":
+                      return <div className="font-medium">{document.name}</div>
+                    case "type":
+                      return <Badge variant="secondary">{document.type}</Badge>
+                    case "date":
+                      return new Date(document.date).toLocaleDateString("it-IT")
+                    case "actions":
+                      return (
+                        <Button variant="ghost" size="sm" className="w-full sm:w-auto">
                           <Download className="mr-2 h-4 w-4" />
                           Scarica
                         </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      )
+                    default:
+                      return document[column.key]
+                  }
+                }}
+                mobileCardClassName="shadow-sm"
+              />
             </CardContent>
           </Card>
         </main>

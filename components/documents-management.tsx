@@ -14,13 +14,25 @@ import {
   FileSpreadsheet,
   FileImage,
   File,
+  Calendar,
+  FolderOpen,
+  MoreHorizontal,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -280,53 +292,74 @@ export function DocumentsManagement() {
           </div>
 
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome Documento</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Membro</TableHead>
-                  <TableHead>Data Caricamento</TableHead>
-                  <TableHead>Dimensione</TableHead>
-                  <TableHead>Stato</TableHead>
-                  <TableHead className="text-right">Azioni</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDocuments.map((doc) => (
-                  <TableRow key={doc.id}>
-                    <TableCell>
+            <ResponsiveTable
+              columns={[
+                { key: "name", header: "Nome Documento" },
+                { key: "category", header: "Categoria" },
+                { key: "member", header: "Membro", hideOnMobile: true },
+                { key: "uploadDate", header: "Data Caricamento", mobileLabel: "Data" },
+                { key: "size", header: "Dimensione", hideOnMobile: true },
+                { key: "status", header: "Stato" },
+                { key: "actions", header: "Azioni", className: "text-right" }
+              ]}
+              data={filteredDocuments}
+              renderCell={(doc, column) => {
+                switch (column.key) {
+                  case "name":
+                    return (
                       <div className="flex items-center gap-2">
                         {getFileIcon(doc.type)}
                         <span className="font-medium">{doc.name}</span>
                       </div>
-                    </TableCell>
-                    <TableCell>{doc.category}</TableCell>
-                    <TableCell>{doc.member}</TableCell>
-                    <TableCell>{new Date(doc.uploadDate).toLocaleDateString("it-IT")}</TableCell>
-                    <TableCell>{doc.size}</TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(doc.status) as any}>
-                        {doc.status}
+                    )
+                  case "uploadDate":
+                    return new Date(doc.uploadDate).toLocaleDateString("it-IT")
+                  case "status":
+                    return (
+                      <Badge
+                        variant={
+                          doc.status === "approvato"
+                            ? "default"
+                            : doc.status === "in_attesa"
+                            ? "secondary"
+                            : "destructive"
+                        }
+                      >
+                        {doc.status === "approvato" ? "Approvato" : 
+                         doc.status === "in_attesa" ? "In Attesa" : "Rifiutato"}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    )
+                  case "actions":
+                    return (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Visualizza
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Download className="mr-2 h-4 w-4" />
+                            Scarica
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Elimina
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )
+                  default:
+                    return doc[column.key]
+                }
+              }}
+              mobileCardClassName="shadow-sm"
+            />
           </div>
         </CardContent>
       </Card>
