@@ -3,6 +3,8 @@ import { MembersStats } from "@/components/members/members-stats"
 import { MembersContent } from "@/components/members/members-content"
 import { DashboardStatsSkeleton, TableSkeleton } from "@/components/ui/skeleton-loaders"
 
+export const dynamic = 'force-dynamic'
+
 export default function MembersPage() {
   return (
     <div className="space-y-4">

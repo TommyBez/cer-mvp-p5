@@ -4,6 +4,8 @@ import { DashboardChartWrapper } from "@/components/dashboard/dashboard-chart-wr
 import { RecentActivity } from "@/components/dashboard/recent-activity"
 import { DashboardStatsSkeleton, ChartSkeleton, ActivityListSkeleton } from "@/components/ui/skeleton-loaders"
 
+export const dynamic = 'force-dynamic'
+
 export default function DashboardPage() {
   return (
     <div className="space-y-4">

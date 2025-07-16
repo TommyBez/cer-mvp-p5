@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { SidebarProvider } from '@/components/ui/sidebar'
+import { ClientProviders } from './client-providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,9 +18,9 @@ export default function RootLayout({
   return (
     <html lang="it" suppressHydrationWarning>
       <body className={inter.className}>
-        <SidebarProvider>
+        <ClientProviders>
           {children}
-        </SidebarProvider>
+        </ClientProviders>
       </body>
     </html>
   )
