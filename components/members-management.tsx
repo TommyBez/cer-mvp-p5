@@ -262,7 +262,6 @@ export function MembersManagement() {
                 <FileText className="h-4 w-4" />
                 {!sidebarCollapsed && "Documenti"}
               </Link>
-              {/* Aggiorna il link per la simulazione nella sidebar */}
               <Link
                 href="/simulation"
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
@@ -272,7 +271,7 @@ export function MembersManagement() {
                 {!sidebarCollapsed && "Simulazione"}
               </Link>
               <Link
-                href="#"
+                href="/gse-reports"
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${sidebarCollapsed ? "justify-center" : ""}`}
                 title={sidebarCollapsed ? "Report GSE" : ""}
               >
