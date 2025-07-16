@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ResponsiveTable } from "@/components/ui/responsive-table"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
@@ -34,6 +35,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
+import { useIsMobile } from "@/components/ui/use-mobile"
 
 // Dati simulati per i membri
 const membersData = [
@@ -310,36 +312,31 @@ export function MembersManagement() {
           </div>
           
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Ruolo</TableHead>
-                  <TableHead>Stato</TableHead>
-                  <TableHead>Energia Condivisa</TableHead>
-                  <TableHead>Data Iscrizione</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMembers.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell className="font-medium">{member.name}</TableCell>
-                    <TableCell>{member.email}</TableCell>
-                    <TableCell>
-                      <Badge variant={getRoleBadgeVariant(member.role)}>{member.role}</Badge>
-                    </TableCell>
-                    <TableCell>
+            <ResponsiveTable
+              columns={[
+                { key: "name", header: "Nome", mobileLabel: "Nome" },
+                { key: "email", header: "Email", hideOnMobile: true },
+                { key: "role", header: "Ruolo" },
+                { key: "status", header: "Stato" },
+                { key: "energyShared", header: "Energia Condivisa", mobileLabel: "Energia" },
+                { key: "joinDate", header: "Data Iscrizione", hideOnMobile: true },
+                { key: "actions", header: "", className: "w-12" },
+              ]}
+              data={filteredMembers}
+              renderCell={(member, column) => {
+                switch (column.key) {
+                  case "role":
+                    return <Badge variant={getRoleBadgeVariant(member.role)}>{member.role}</Badge>
+                  case "status":
+                    return (
                       <Badge
                         variant={getStatusBadgeVariant(member.status) as "default" | "secondary" | "outline"}
                       >
                         {member.status}
                       </Badge>
-                    </TableCell>
-                    <TableCell>{member.energyShared}</TableCell>
-                    <TableCell>{member.joinDate}</TableCell>
-                    <TableCell>
+                    )
+                  case "actions":
+                    return (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -367,11 +364,13 @@ export function MembersManagement() {
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    )
+                  default:
+                    return member[column.key]
+                }
+              }}
+              mobileCardClassName="shadow-sm"
+            />
           </div>
         </CardContent>
       </Card>
