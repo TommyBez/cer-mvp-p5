@@ -1,5 +1,5 @@
-import { MemberDashboard } from "@/components/member-dashboard"
+import { MemberDashboardContent } from "@/components/member-dashboard-content"
 
 export default function MemberAreaPage() {
-  return <MemberDashboard />
+  return <MemberDashboardContent />
 }
