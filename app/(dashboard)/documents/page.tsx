@@ -1,4 +1,6 @@
-import { DocumentsContent } from "@/components/documents-content"
+import { DocumentsPageHeader } from "@/components/documents/documents-page-header"
+import { DocumentsStats } from "@/components/documents/documents-stats"
+import { DocumentsTableSection } from "@/components/documents/documents-table-section"
 
 // Simulate async data fetching
 async function getDocumentsData() {
@@ -70,7 +72,13 @@ async function getDocumentsData() {
 }
 
 export default async function DocumentsPage() {
-  const documentsData = await getDocumentsData()
+  const { documents, stats } = await getDocumentsData()
   
-  return <DocumentsContent initialData={documentsData} />
+  return (
+    <div className="space-y-6">
+      <DocumentsPageHeader />
+      <DocumentsStats stats={stats} />
+      <DocumentsTableSection initialDocuments={documents} />
+    </div>
+  )
 }

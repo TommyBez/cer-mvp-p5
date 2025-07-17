@@ -1,4 +1,7 @@
-import { DashboardContent } from "@/components/dashboard-content"
+import { DashboardAuthCheck } from "@/components/dashboard/dashboard-auth-check"
+import { DashboardMetrics } from "@/components/dashboard/dashboard-metrics"
+import { DashboardChart } from "@/components/dashboard/dashboard-chart"
+import { DashboardActivities } from "@/components/dashboard/dashboard-activities"
 
 // Simulate async data fetching
 async function getDashboardData() {
@@ -50,7 +53,16 @@ async function getDashboardData() {
 }
 
 export default async function DashboardPage() {
-  const dashboardData = await getDashboardData()
+  const { realTimeData, chartData, activities } = await getDashboardData()
   
-  return <DashboardContent initialData={dashboardData} />
+  return (
+    <>
+      <DashboardAuthCheck />
+      <div className="space-y-6">
+        <DashboardMetrics data={realTimeData} />
+        <DashboardChart data={chartData} />
+        <DashboardActivities activities={activities} />
+      </div>
+    </>
+  )
 }

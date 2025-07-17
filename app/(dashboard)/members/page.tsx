@@ -1,4 +1,6 @@
-import { MembersContent } from "@/components/members-content"
+import { MembersPageHeader } from "@/components/members/members-page-header"
+import { MembersStats } from "@/components/members/members-stats"
+import { MembersTableSection } from "@/components/members/members-table-section"
 
 // Simulate async data fetching
 async function getMembersData() {
@@ -80,7 +82,13 @@ async function getMembersData() {
 }
 
 export default async function MembersPage() {
-  const membersData = await getMembersData()
+  const { members, stats } = await getMembersData()
   
-  return <MembersContent initialData={membersData} />
+  return (
+    <div className="space-y-6">
+      <MembersPageHeader />
+      <MembersStats stats={stats} />
+      <MembersTableSection initialMembers={members} />
+    </div>
+  )
 }
