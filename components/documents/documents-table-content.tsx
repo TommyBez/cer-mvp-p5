@@ -1,3 +1,5 @@
+"use client"
+
 import { FileText, FileSpreadsheet, FileImage, File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { ResponsiveTableAdvanced } from "@/components/responsive-table-advanced"
@@ -35,60 +37,70 @@ const getFileIcon = (type: string) => {
 export function DocumentsTableContent({ documents }: DocumentsTableContentProps) {
   const columns = [
     { 
+      key: "document",
       header: "Documento", 
-      accessorKey: "document",
-      cell: (row: any) => (
+      accessor: (doc: Document) => (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
-            {getFileIcon(row.type)}
+            {getFileIcon(doc.type)}
           </div>
           <div>
-            <div className="font-medium">{row.name}</div>
-            <div className="text-sm text-muted-foreground line-clamp-1">{row.description}</div>
+            <div className="font-medium">{doc.name}</div>
+            <div className="text-sm text-muted-foreground line-clamp-1">{doc.description}</div>
           </div>
         </div>
-      )
+      ),
+      priority: 3,
+      filterable: true
     },
     { 
+      key: "type",
       header: "Tipo", 
-      accessorKey: "type",
-      cell: (row: any) => (
-        <Badge variant="outline">
-          {row.type}
-        </Badge>
-      )
+      accessor: (doc: Document) => (
+        <Badge variant="secondary">{doc.type}</Badge>
+      ),
+      priority: 2,
+      sortable: true
     },
-    { header: "Dimensione", accessorKey: "size", className: "text-right" },
-    { header: "Data Upload", accessorKey: "uploadDate" },
-    { header: "Caricato da", accessorKey: "uploadedBy" },
     { 
-      header: "Stato", 
-      accessorKey: "status",
-      cell: (row: any) => (
-        <Badge 
-          variant={
-            row.status === "Pubblicato" || row.status === "Approvato" ? "default" : 
-            row.status === "In revisione" ? "secondary" : 
-            "destructive"
-          }
-        >
-          {row.status}
-        </Badge>
-      )
+      key: "size",
+      header: "Dimensione", 
+      accessor: (doc: Document) => doc.size,
+      priority: 1,
+      sortable: true
     },
-    {
-      header: "Azioni",
-      accessorKey: "actions",
-      cell: (row: any) => <DocumentRowActions document={row} />
+    { 
+      key: "uploadDate",
+      header: "Data Caricamento", 
+      accessor: (doc: Document) => doc.uploadDate,
+      priority: 2,
+      sortable: true
+    },
+    { 
+      key: "uploadedBy",
+      header: "Caricato da", 
+      accessor: (doc: Document) => doc.uploadedBy,
+      priority: 1,
+      filterable: true
+    },
+    { 
+      key: "actions",
+      header: "Azioni", 
+      accessor: (doc: Document) => <DocumentRowActions document={doc} />,
+      priority: 3
     }
   ]
 
   return (
     <ResponsiveTableAdvanced
-      columns={columns}
       data={documents}
-      pageSize={10}
-      hideSearch
+      columns={columns}
+      getRowKey={(doc) => doc.id}
+      enableSorting={true}
+      enableFiltering={false}
+      enablePagination={true}
+      itemsPerPage={10}
+      mobileLayout="card"
     />
   )
 }

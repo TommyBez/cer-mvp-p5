@@ -1,3 +1,5 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge"
 import { ResponsiveTableAdvanced } from "@/components/responsive-table-advanced"
 import { GSEReportRowActions } from "./gse-report-row-actions"
@@ -21,59 +23,94 @@ interface GSEReportsTableContentProps {
 
 export function GSEReportsTableContent({ reports }: GSEReportsTableContentProps) {
   const columns = [
-    { header: "Periodo", accessorKey: "period" },
     { 
+      key: "period",
+      header: "Periodo", 
+      accessor: (report: Report) => report.period,
+      priority: 3,
+      sortable: true
+    },
+    { 
+      key: "type",
       header: "Tipo", 
-      accessorKey: "type",
-      cell: (row: any) => (
+      accessor: (report: Report) => (
         <Badge variant="outline">
-          {row.type}
+          {report.type}
         </Badge>
-      )
+      ),
+      priority: 2
     },
     { 
+      key: "status",
       header: "Stato", 
-      accessorKey: "status",
-      cell: (row: any) => (
+      accessor: (report: Report) => (
         <Badge 
-          variant={row.status === "Completato" ? "default" : "secondary"}
+          variant={report.status === "Completato" ? "default" : "secondary"}
         >
-          {row.status}
+          {report.status}
         </Badge>
-      )
+      ),
+      priority: 3,
+      sortable: true
     },
-    { header: "Data Invio", accessorKey: "submissionDate" },
-    { header: "Energia Prodotta", accessorKey: "energyProduced", className: "text-right" },
-    { header: "Energia Condivisa", accessorKey: "energyShared", className: "text-right" },
-    { header: "Incentivo", accessorKey: "incentiveAmount", className: "text-right" },
     { 
+      key: "submissionDate",
+      header: "Data Invio", 
+      accessor: (report: Report) => report.submissionDate,
+      priority: 2,
+      sortable: true
+    },
+    { 
+      key: "energyProduced",
+      header: "Energia Prodotta", 
+      accessor: (report: Report) => report.energyProduced,
+      priority: 1,
+      sortable: true
+    },
+    { 
+      key: "energyShared",
+      header: "Energia Condivisa", 
+      accessor: (report: Report) => report.energyShared,
+      priority: 1,
+      sortable: true
+    },
+    { 
+      key: "incentiveAmount",
+      header: "Incentivo", 
+      accessor: (report: Report) => report.incentiveAmount,
+      priority: 2,
+      sortable: true
+    },
+    { 
+      key: "paymentStatus",
       header: "Pagamento", 
-      accessorKey: "paymentStatus",
-      cell: (row: any) => (
+      accessor: (report: Report) => (
         <Badge 
-          variant={
-            row.paymentStatus === "Pagato" ? "default" : 
-            row.paymentStatus === "In attesa" ? "secondary" : 
-            "destructive"
-          }
+          variant={report.paymentStatus === "Pagato" ? "default" : "secondary"}
         >
-          {row.paymentStatus}
+          {report.paymentStatus}
         </Badge>
-      )
+      ),
+      priority: 2
     },
     {
+      key: "actions",
       header: "Azioni",
-      accessorKey: "actions",
-      cell: (row: any) => <GSEReportRowActions report={row} />
+      accessor: (report: Report) => <GSEReportRowActions report={report} />,
+      priority: 3
     }
   ]
 
   return (
     <ResponsiveTableAdvanced
-      columns={columns}
       data={reports}
-      pageSize={5}
-      hideSearch
+      columns={columns}
+      getRowKey={(report) => report.id}
+      enableSorting={true}
+      enableFiltering={false}
+      enablePagination={true}
+      itemsPerPage={10}
+      mobileLayout="card"
     />
   )
 }

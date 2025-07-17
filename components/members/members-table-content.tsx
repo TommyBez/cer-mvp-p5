@@ -1,3 +1,5 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge"
 import { ResponsiveTableAdvanced } from "@/components/responsive-table-advanced"
 import { MemberRowActions } from "./member-row-actions"
@@ -22,59 +24,82 @@ interface MembersTableContentProps {
 export function MembersTableContent({ members }: MembersTableContentProps) {
   const columns = [
     { 
+      key: "member",
       header: "Membro", 
-      accessorKey: "member",
-      cell: (row: any) => (
+      accessor: (member: Member) => (
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
-            {row.name.split(' ').map((n: string) => n[0]).join('')}
+            {member.name.split(' ').map((n: string) => n[0]).join('')}
           </div>
           <div>
-            <div className="font-medium">{row.name}</div>
-            <div className="text-sm text-muted-foreground">{row.email}</div>
+            <div className="font-medium">{member.name}</div>
+            <div className="text-sm text-muted-foreground">{member.email}</div>
           </div>
         </div>
-      )
+      ),
+      priority: 3,
+      filterable: true
     },
     { 
+      key: "role",
       header: "Ruolo", 
-      accessorKey: "role",
-      cell: (row: any) => (
-        <Badge variant={row.role === "Produttore" ? "default" : "secondary"}>
-          {row.role}
+      accessor: (member: Member) => (
+        <Badge variant={member.role === "Produttore" ? "default" : "secondary"}>
+          {member.role}
         </Badge>
-      )
+      ),
+      priority: 2,
+      sortable: true
     },
     { 
+      key: "status",
       header: "Stato", 
-      accessorKey: "status",
-      cell: (row: any) => (
+      accessor: (member: Member) => (
         <Badge 
           variant={
-            row.status === "Attivo" ? "default" : 
-            row.status === "In attesa" ? "secondary" : 
+            member.status === "Attivo" ? "default" : 
+            member.status === "In attesa" ? "secondary" : 
             "destructive"
           }
         >
-          {row.status}
+          {member.status}
         </Badge>
-      )
+      ),
+      priority: 2,
+      sortable: true
     },
-    { header: "Energia Condivisa", accessorKey: "energyShared", className: "text-right" },
-    { header: "Data Iscrizione", accessorKey: "joinDate" },
+    { 
+      key: "energyShared",
+      header: "Energia Condivisa", 
+      accessor: (member: Member) => member.energyShared,
+      priority: 1,
+      sortable: true
+    },
+    { 
+      key: "joinDate",
+      header: "Data Iscrizione", 
+      accessor: (member: Member) => member.joinDate,
+      priority: 1,
+      sortable: true
+    },
     {
+      key: "actions",
       header: "Azioni",
-      accessorKey: "actions",
-      cell: (row: any) => <MemberRowActions member={row} />
+      accessor: (member: Member) => <MemberRowActions member={member} />,
+      priority: 3
     }
   ]
 
   return (
     <ResponsiveTableAdvanced
-      columns={columns}
       data={members}
-      pageSize={10}
-      hideSearch
+      columns={columns}
+      getRowKey={(member) => member.id}
+      enableSorting={true}
+      enableFiltering={false}
+      enablePagination={true}
+      itemsPerPage={10}
+      mobileLayout="card"
     />
   )
 }
