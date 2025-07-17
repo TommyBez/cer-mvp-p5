@@ -1,4 +1,7 @@
-import { GSEReportsContent } from "@/components/gse-reports-content"
+import { GSEReportsPageHeader } from "@/components/gse-reports/gse-reports-page-header"
+import { GSEReportsStats } from "@/components/gse-reports/gse-reports-stats"
+import { GSEReportsTableSection } from "@/components/gse-reports/gse-reports-table-section"
+import { GSEReportsDeadlines } from "@/components/gse-reports/gse-reports-deadlines"
 
 // Simulate async data fetching
 async function getGSEReportsData() {
@@ -73,7 +76,19 @@ async function getGSEReportsData() {
 }
 
 export default async function GseReportsPage() {
-  const reportsData = await getGSEReportsData()
+  const { reports, stats, upcomingDeadlines } = await getGSEReportsData()
   
-  return <GSEReportsContent initialData={reportsData} />
+  return (
+    <div className="space-y-6">
+      <GSEReportsPageHeader />
+      <GSEReportsStats stats={stats} />
+      
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <GSEReportsTableSection initialReports={reports} />
+        </div>
+        <GSEReportsDeadlines deadlines={upcomingDeadlines} />
+      </div>
+    </div>
+  )
 }

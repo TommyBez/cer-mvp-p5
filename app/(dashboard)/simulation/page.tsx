@@ -1,4 +1,7 @@
-import { SimulationContent } from "@/components/simulation-content"
+import { SimulationPageHeader } from "@/components/simulation/simulation-page-header"
+import { SimulationConfigSection } from "@/components/simulation/simulation-config-section"
+import { SimulationResultsSection } from "@/components/simulation/simulation-results-section"
+import { SimulationScenarios } from "@/components/simulation/simulation-scenarios"
 
 // Simulate async data fetching
 async function getSimulationData() {
@@ -58,7 +61,14 @@ async function getSimulationData() {
 }
 
 export default async function SimulationPage() {
-  const simulationData = await getSimulationData()
+  const { currentConfig, projections, scenarios } = await getSimulationData()
   
-  return <SimulationContent initialData={simulationData} />
+  return (
+    <div className="space-y-6">
+      <SimulationPageHeader />
+      <SimulationConfigSection initialConfig={currentConfig} />
+      <SimulationResultsSection projections={projections} />
+      <SimulationScenarios scenarios={scenarios} currentConfig={currentConfig} />
+    </div>
+  )
 }
