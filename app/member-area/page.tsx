@@ -3,7 +3,6 @@ import { MemberAreaMetrics } from "@/components/member-area/member-area-metrics"
 import { MemberAreaChart } from "@/components/member-area/member-area-chart"
 import { MemberAreaDevices } from "@/components/member-area/member-area-devices"
 import { MemberAreaActivities } from "@/components/member-area/member-area-activities"
-import { MemberAreaAuthCheck } from "@/components/member-area/member-area-auth-check"
 
 // Simulate async data fetching
 async function getMemberData() {
@@ -50,17 +49,14 @@ export default async function MemberAreaPage() {
   const { user, metrics, monthlyData, devices, activities } = await getMemberData()
   
   return (
-    <>
-      <MemberAreaAuthCheck />
-      <div className="container mx-auto py-6 space-y-6">
-        <MemberAreaHeader user={user} />
-        <MemberAreaMetrics metrics={metrics} />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <MemberAreaChart data={monthlyData} />
-          <MemberAreaDevices devices={devices} />
-        </div>
-        <MemberAreaActivities activities={activities} />
+    <div className="space-y-6">
+      <MemberAreaHeader user={user} />
+      <MemberAreaMetrics metrics={metrics} />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <MemberAreaChart data={monthlyData} />
+        <MemberAreaDevices devices={devices} />
       </div>
-    </>
+      <MemberAreaActivities activities={activities} />
+    </div>
   )
 }
